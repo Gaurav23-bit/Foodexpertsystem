@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Adulteration Testing Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Theme Variables */
+        :root {
+            /* Light Theme Colors */
+            --color-bg: #f8fafc;
+            --color-bg-offset: #ffffff;
+            --color-text: #0f172a;
+            --color-text-muted: #64748b;
+            --color-primary: #6366f1;
+            --color-primary-offset: #4f46e5;
+            --color-border: #e2e8f0;
+            --color-danger: #ef4444;
+            --color-warning: #f59e0b;
+            --color-success: #10b981;
+            --color-glass: rgba(255, 255, 255, 0.8);
+            --color-glass-border: rgba(255, 255, 255, 0.2);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 1rem;
+            --radius-full: 9999px;
+            
+            /* Typography */
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 2rem;
+        }
+
+        /* Dark Theme Colors */
+        [data-theme="dark"] {
+            --color-bg: #0f172a;
+            --color-bg-offset: #1e293b;
+            --color-text: #f8fafc;
+            --color-text-muted: #94a3b8;
+            --color-primary: #818cf8;
+            --color-primary-offset: #6366f1;
+            --color-border: #334155;
+            --color-glass: rgba(30, 41, 59, 0.8);
+            --color-glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        /* CSS Reset and Base Styles */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.5;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            transition: background-color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        img, video, iframe {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+            color: inherit;
+        }
+
+        /* Header & Navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: var(--color-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--color-glass-border);
+        }
+
+        .nav {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: var(--spacing-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--color-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            border-radius: var(--radius-full);
+            transition: background-color 0.3s ease;
+            font-size: var(--font-size-lg);
+            line-height: 1;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--color-bg);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 4rem;
+            min-height: 80vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: var(--spacing-xl);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+        }
+
+        /* Search Section */
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: -3rem auto 0;
+            padding: var(--spacing-lg);
+            background: var(--color-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-glass-border);
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            background: var(--color-bg-offset);
+            color: var(--color-text);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary);
+        }
+
+        /* Results Section */
+        .results {
+            max-width: 1280px;
+            margin: var(--spacing-xl) auto;
+            padding: var(--spacing-sm);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+            list-style: none;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: var(--color-bg-offset);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px; /* fill the available block */
+            object-fit: cover; /* no letterboxing, fills area */
+            /* Background for loading state */
+            background-color: var(--color-bg);
+            display: block;
+        }
+
+        .product-content {
+            padding: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .product-description {
+            color: var(--color-text-muted);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-sm);
+            flex-grow: 1;
+        }
+        
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-text);
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background: var(--color-bg-offset);
+            color: var(--color-text);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .qa-result {
+            margin-top: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+        }
+        
+        .qa-result.success {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: var(--color-success);
+            color: var(--color-success);
+        }
+        
+        .qa-result.warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-color: var(--color-warning);
+            color: var(--color-warning);
+        }
+        
+        .qa-result.danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+        }
+        
+        .qa-result ul {
+            margin-top: var(--spacing-sm);
+            padding-left: var(--spacing-md);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            gap: var(--spacing-xs);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-offset);
+        }
+
+        .btn-secondary {
+            background: var(--color-bg-offset);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-bg);
+        }
+
+        /* Tags and Badges */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+        }
+        
+        [data-theme="dark"] .tag {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tag-critical {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+
+        .tag-high {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .tag-medium {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        
+        [data-theme="dark"] .tag-medium {
+             color: #60a5fa;
+        }
+
+        .tag-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        /* Utility Classes */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .search-container {
+                margin: -2rem var(--spacing-sm) 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: var(--spacing-lg);
+            }
+
+            .hero h1 {
+                font-size: var(--font-size-xl);
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Product Modal (in-page details) */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            z-index: 100;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--color-bg-offset);
+            border: 1px solid var(--color-border);
+            border-radius: 0;
+            box-shadow: var(--shadow-lg);
+        }
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-bottom: 1px solid var(--color-border);
+        }
+        .modal-body { padding: var(--spacing-lg); flex: 1; overflow: hidden; }
+        .modal-open { overflow: hidden; }
+
+        /* Two-column product layout full-height */
+        .product-layout { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: var(--spacing-md); 
+            height: 100%;
+        }
+        #left-col, #right-col { height: 100%; overflow: auto; }
+        #left-col .card + .card { margin-top: var(--spacing-md); }
+        #right-col { display: flex; flex-direction: column; gap: var(--spacing-md); }
+        .video-card { flex: 1 1 50%; display: flex; flex-direction: column; }
+        .video-frame { width: 100%; height: 100%; border: 0; border-radius: var(--radius-md); background: #000; }
+        .qa-card { flex: 1 1 50%; overflow: auto; }
+
+        /* Polished scrollbars inside modal columns */
+        #left-col, #right-col, .qa-card {
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-border) transparent;
+        }
+        #left-col::-webkit-scrollbar, #right-col::-webkit-scrollbar, .qa-card::-webkit-scrollbar { height: 8px; width: 8px; }
+        #left-col::-webkit-scrollbar-track, #right-col::-webkit-scrollbar-track, .qa-card::-webkit-scrollbar-track { background: transparent; }
+        #left-col::-webkit-scrollbar-thumb, #right-col::-webkit-scrollbar-thumb, .qa-card::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: var(--radius-full);
+        }
+        #left-col::-webkit-scrollbar-thumb:hover, #right-col::-webkit-scrollbar-thumb:hover, .qa-card::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+        /* Modal image: fit inside without crop/stretch */
+        #overview-card .product-image {
+            width: 100%;
+            height: auto;
+            max-height: 45vh;
+            object-fit: contain;
+            background: var(--color-bg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+        }
+    </style>
+</head>
+<body>
+    <header class="header" role="banner">
+        <nav class="nav" role="navigation">
+            <a href="index.html" class="logo" aria-label="Food Safety Guide Home">
+                Food Safety Guide
+            </a>
+            <button id="theme-toggle" 
+                    class="theme-toggle" 
+                    aria-label="Toggle dark mode">
+                🌙
+            </button>
+            <button id="lang-toggle"
+                    class="theme-toggle"
+                    aria-label="Toggle language">
+                मराठी
+            </button>
+        </nav>
+    </header>
+
+    <main role="main">
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-content">
+                <h1 id="hero-title">Food Adulteration Testing Guide</h1>
+                <p>Verify the authenticity of your food with simple home tests and expert guidance.</p>
+            </div>
+        </section>
+
+        <section class="search-section" aria-labelledby="search-title">
+            <div class="search-container">
+                <h2 id="search-title" class="visually-hidden">Search Food Items</h2>
+                <input type="search" 
+                       id="food-search" 
+                       class="search-input"
+                       placeholder="Search for a food item (e.g., milk, honey, turmeric)"
+                       aria-label="Search for a food item"
+                       autocomplete="off">
+                <datalist id="search-suggestions">
+                    </datalist>
+            </div>
+        </section>
+
+        <section class="results" aria-labelledby="results-title">
+            <h2 id="results-title" class="visually-hidden">Search Results</h2>
+            <ul id="results-grid" class="results-grid"></ul>
+        </section>
+
+        <!-- In-page Product Details Modal -->
+        <div id="product-modal-overlay" class="modal-overlay" aria-hidden="true">
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+                <div class="modal-header">
+                    <strong id="modal-title">Product Details</strong>
+                    <button id="modal-close" class="close-btn" aria-label="Close">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="product-layout">
+                        <div id="left-col">
+                            <!-- Overview -->
+                            <div class="card" id="overview-card">
+                                <img id="prod-image" class="product-image" src="" alt="Product Image" onerror="this.style.display='none'">
+                                <h1 class="title" id="prod-title">Product Name</h1>
+                                <p class="desc" id="prod-desc">Product description</p>
+                            </div>
+
+                            <!-- Adulterations -->
+                            <div class="card">
+                                <h3>Common Adulterations</h3>
+                                <div id="adulterations-list" class="tags-list" style="margin-top: var(--spacing-md);"></div>
+                            </div>
+
+                            <!-- Lab Tests -->
+                            <div class="card">
+                                <h3>Professional Lab Tests</h3>
+                                <ul id="lab-tests-list"></ul>
+                            </div>
+
+                            <!-- Home Tests -->
+                            <div class="card">
+                                <h3>Home Tests</h3>
+                                <div id="home-tests-list"></div>
+                            </div>
+                        </div>
+
+                        <div id="right-col">
+                            <!-- Video Top Half -->
+                            <div class="card video-card">
+                                <h3>Video</h3>
+                                <iframe id="prod-video" class="video-frame" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+
+                            <!-- Q&A Bottom Half -->
+                            <div class="card qa-card">
+                                <h3>Q & A Check</h3>
+                                <p style="color: var(--color-text-muted); margin-bottom: 1rem;">Answer these observational questions for a quick purity score.</p>
+                                <form id="qa-form" class="qa-form" onsubmit="return false;">
+                                    <div id="qa-questions"></div>
+                                    <div style="display:flex; gap:0.5rem; margin-top:0.25rem">
+                                        <button type="button" class="btn btn-primary" id="calculate-score-btn">Calculate Score</button>
+                                        <button type="button" class="btn btn-secondary" id="show-wrong-btn">Show Issues</button>
+                                        <button type="button" class="btn btn-secondary" id="clear-qa">Clear</button>
+                                    </div>
+                                </form>
+                                <div id="qa-result" class="qa-result" hidden></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample Data Structure (Standardized Image Paths)
+        const sampleData = {
+            items: [
+                {
+                    id: "milk",
+                    name: "Milk",
+                    image: "images/milk.jpg",
+                    description: "Fresh cow's milk - commonly targeted for adulteration with water and other substances.",
+                    adulterations: [
+                        { name: "Water dilution", explanation: "Reduces nutritional value", severity: "high" },
+                        { name: "Starch", explanation: "Added to increase thickness", severity: "high" },
+                        { name: "Detergent", explanation: "Added to emulate natural properties", severity: "critical" }
+                    ],
+                    videos: [
+                        {
+                            title: "How to Test Milk for Starch",
+                            url: "https://www.youtube.com/embed/dZR7ajFhbpc",
+                            description: "Learn how to perform the iodine test to detect starch in milk."
+                        },
+                        {
+                            title: "Understanding Milk Adulteration",
+                            url: "https://www.youtube.com/embed/SRxPnHh03-s",
+                            description: "A comprehensive guide to detecting common milk adulterants."
+                        }
+                    ],
+                    homeTests: [
+                        {
+                            id: "milk-iodine",
+                            title: "Iodine Test for Starch",
+                            instructions: [
+                                "Take 3ml milk in a test tube.",
+                                "Add 2-3 drops of iodine solution.",
+                                "Observe color change."
+                            ],
+                            expectedOutcome: "Blue-black color indicates presence of starch. Pure milk remains brownish.",
+                            videoUrl: "http://www.youtube.com/watch?v=ki_eMKbFyo4",
+                            imageUrl: "https://images.unsplash.com/photo-1634141510639-d691d86f47be?auto=format&fit=crop&q=80",
+                        }
+                    ],
+                    labTests: [
+                        { name: "Fat content analysis", why: "Detects water dilution", approxCost: "$20-30" },
+                        { name: "Chemical composition test", why: "Detects artificial additives", approxCost: "$50-70" }
+                    ],
+                    questions: [
+                        { q: "Does the milk form temporary foam when shaken?", type: "boolean", weight: 0.3, failIfTrue: false, ideal: true, reason: "Good milk has some foam." },
+                        { q: "Does it have a bluish tint?", type: "boolean", weight: 0.3, failIfTrue: true, ideal: false, reason: "A blue tint can indicate water dilution." },
+                        { q: "How does it feel between your fingers?", type: "choice", options: ["Sticky", "Normal", "Watery"], weight: 0.4, ideal: "Normal", reason: "Sticky can mean detergent, watery means dilution."}
+                    ]
+                },
+                {
+                    id: "honey",
+                    name: "Honey",
+                    image: "images/honey.jpg",
+                    description: "Natural honey - verify authenticity and detect sugar syrup mixing.",
+                    videos: [
+                        {
+                            title: "Simple Honey Purity Test at Home",
+                            url: "https://www.youtube.com/embed/EyZgasQY5Y0",
+                            description: "Learn how to check honey purity using simple water test at home."
+                        },
+                        {
+                            title: "Detecting Sugar Syrup in Honey",
+                            url: "https://www.youtube.com/embed/S5RvFxPkfwc",
+                            description: "Professional demonstration of methods to identify adulterated honey."
+                        }
+                    ],
+                    adulterations: [
+                        { name: "Sugar syrup", explanation: "Added to increase volume", severity: "high" },
+                        { name: "Corn syrup", explanation: "Cheaper substitute", severity: "high" },
+                        { name: "Artificial sweeteners", explanation: "To maintain sweetness after dilution", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "honey-water",
+                            title: "Water Dissolution Test",
+                            instructions: [
+                                "Put a spoonful of honey in a glass of water.",
+                                "Observe how it settles.",
+                                "Check if it dissolves easily."
+                            ],
+                            expectedOutcome: "Pure honey forms a lump and settles at the bottom. Adulterated honey dissolves quickly.",
+                            videoUrl: "http://www.youtube.com/watch?v=aey2vyV3vWc",
+                            imageUrl: "https://images.unsplash.com/photo-1639668232683-6eb389282574?auto=format&fit=crop&q=80"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Pollen analysis", why: "Confirms natural origin", approxCost: "$40-60" },
+                        { name: "Sugar profile test", why: "Detects added syrups", approxCost: "$30-50" }
+                    ],
+                    questions: [
+                        { q: "Does it crystallize over time?", type: "boolean", weight: 0.5, failIfTrue: false, ideal: true, reason: "Pure honey often crystallizes. Non-crystallizing honey might be over-processed or adulterated." },
+                        { q: "How quickly does it dissolve in water?", type: "choice", options: ["Very fast", "Slowly", "Forms a lump"], weight: 0.5, ideal: "Forms a lump", reason: "Pure honey is dense and doesn't dissolve easily." }
+                    ]
+                },
+                {
+                    id: "turmeric",
+                    name: "Turmeric Powder",
+                    image: "images/turmeric.jpg",
+                    description: "Ground turmeric powder - verify purity and detect artificial colorants.",
+                    videos: [
+                        {
+                            title: "Turmeric Purity Test at Home",
+                            url: "https://www.youtube.com/embed/mONuFR_BVls",
+                            description: "Simple methods to check if your turmeric powder is pure."
+                        }
+                    ],
+                    adulterations: [
+                        { name: "Metanil yellow", explanation: "Artificial color, carcinogenic", severity: "critical" },
+                        { name: "Chalk powder", explanation: "Used as cheap filler", severity: "high" },
+                        { name: "Lead chromate", explanation: "Added for color enhancement, highly toxic", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "turmeric-water",
+                            title: "Water Test",
+                            instructions: [
+                                "Add a spoonful to a glass of warm water.",
+                                "Do not stir.",
+                                "Let it settle for 20 minutes."
+                            ],
+                            expectedOutcome: "Pure turmeric settles at the bottom, leaving clear water. Adulterants like chalk powder will settle, and Metanil yellow will streak the water yellow.",
+                            videoUrl: "http://www.youtube.com/watch?v=EVZO2xajT4U"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Chromatography", why: "Detects artificial colors", approxCost: "$50-70" },
+                        { name: "Heavy metal screening", why: "Detects lead chromate", approxCost: "$80-100" }
+                    ],
+                    questions: [
+                        { q: "Does it leave a bright yellow color in the water immediately?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "This indicates artificial colors leaking." },
+                        { q: "Does it taste slightly bitter?", type: "boolean", weight: 0.4, failIfTrue: false, ideal: true, reason: "Pure turmeric has a characteristic bitter, musky taste. Chalkiness is a bad sign." }
+                    ]
+                },
+                {
+                    id: "ghee",
+                    name: "Ghee (Clarified Butter)",
+                    image: "images/ghee.jpg",
+                    description: "Clarified butter - check for vegetable oil mixing and artificial colors.",
+                    adulterations: [
+                        { name: "Vegetable oil (Vanaspati)", explanation: "Added as cheaper substitute", severity: "high" },
+                        { name: "Animal fat", explanation: "Non-dairy fat addition", severity: "high" },
+                        { name: "Mashed potatoes", explanation: "Starch to add bulk", severity: "medium" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "ghee-melt",
+                            title: "Palm Test",
+                            instructions: [
+                                "Take a small amount of ghee in your palm.",
+                                "Wait for it to melt.",
+                                "Observe the behavior."
+                            ],
+                            expectedOutcome: "Pure ghee melts quickly at body temperature. If it takes time or doesn't melt, it may be adulterated with vegetable oils.",
+                            videoUrl: "http://www.youtube.com/watch?v=ndoQtY19CFs"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Fatty acid profile", why: "Identifies oil mixing", approxCost: "$60-80" }
+                    ],
+                    questions: [
+                        { q: "Does it solidify completely when refrigerated?", type: "boolean", weight: 0.4, failIfTrue: false, ideal: true, reason: "Pure ghee solidifies uniformly. Vegetable oils may form separate layers." },
+                        { q: "Does it have a grainy texture when solid?", type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: "Good quality ghee often has a slightly grainy texture." }
+                    ]
+                },
+                {
+                    id: "olive-oil",
+                    name: "Olive Oil",
+                    image: "images/olive-oil.jpg",
+                    description: "Extra virgin olive oil - verify authenticity and detect cheaper oil mixing.",
+                    adulterations: [
+                        { name: "Cheaper oils", explanation: "Mixed with canola or sunflower oil", severity: "high" },
+                        { name: "Refined olive oil", explanation: "Sold as extra virgin", severity: "medium" },
+                        { name: "Artificial coloring", explanation: "To enhance appearance", severity: "high" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "olive-fridge",
+                            title: "Refrigeration Test",
+                            instructions: [
+                                "Place the oil bottle in the refrigerator for 24 hours.",
+                                "Observe solidification."
+                            ],
+                            expectedOutcome: "Pure extra virgin olive oil (high in monounsaturated fats) will become thick, cloudy, and may solidify. Refined or mixed oils will often remain liquid.",
+                            videoUrl: "http://www.youtube.com/watch?v=EEKt0l3TnzY"
+                        }
+                    ],
+                    labTests: [
+                        { name: "UV absorption test", why: "Confirms virgin grade", approxCost: "$70-90" }
+                    ],
+                    questions: [
+                        { q: "Does it have a peppery sensation in the back of your throat (when tasted raw)?", type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: "This 'pungency' is a key sign of high-quality, fresh extra virgin olive oil." },
+                        { q: "Does it solidify in the fridge?", type: "boolean", weight: 0.4, failIfTrue: false, ideal: true, reason: "Genuine EVOO should become cloudy and thick when cold." }
+                    ]
+                },
+                {
+                    id: "spices",
+                    name: "Mixed Spices (Garam Masala)",
+                    image: "images/spices.jpg",
+                    description: "Mixed spice powder - check for sawdust and artificial colors.",
+                    adulterations: [
+                        { name: "Sawdust", explanation: "Used as filler", severity: "high" },
+                        { name: "Artificial colors", explanation: "To enhance appearance", severity: "critical" },
+                        { name: "Starch powder", explanation: "Cheap bulking agent", severity: "medium" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "spice-float",
+                            title: "Float Test",
+                            instructions: [
+                                "Sprinkle a pinch of spice powder on the surface of a glass of water.",
+                                "Observe what floats and what sinks."
+                            ],
+                            expectedOutcome: "Pure spices will either float or sink slowly. Adulterants like sawdust or brick powder will often sink immediately or float on the surface distinctly.",
+                            videoUrl: "http://www.youtube.com/watch?v=blsROQcmpts"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Microscopic analysis", why: "Detects sawdust", approxCost: "$40-60" }
+                    ],
+                    questions: [
+                        { q: "Does it have a strong, complex aroma?", type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: "Adulterated spices (with fillers) will have a weak or 'dusty' smell." },
+                        { q: "Is the color unnaturally bright or uniform?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "Natural spice mixes have slight color variations. A uniform, bright color can indicate dyes." }
+                    ]
+                },
+                {
+                    id: "sugar",
+                    name: "Sugar",
+                    image: "images/sugar.jpg",
+                    description: "White granulated sugar - detect chalk powder and non-sugar sweeteners.",
+                    adulterations: [
+                        { name: "Chalk powder", explanation: "Used as bulking agent", severity: "high" },
+                        { name: "Washing soda", explanation: "Used to add weight", severity: "high" },
+                        { name: "Sand", explanation: "Used to increase weight", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "sugar-dissolve",
+                            title: "Dissolution Test",
+                            instructions: [
+                                "Add a spoonful of sugar to a glass of water.",
+                                "Stir thoroughly.",
+                                "Check for residue at the bottom."
+                            ],
+                            expectedOutcome: "Pure sugar dissolves completely, leaving clear water. Chalk powder, sand, or other insolubles will settle at the bottom.",
+                            videoUrl: "http://www.youtube.com/watch?v=vHGesmiKM8w"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Solubility test", why: "Detects insoluble adulterants", approxCost: "$20-30" }
+                    ],
+                    questions: [
+                        { q: "Does it dissolve completely in water?", type: "boolean", weight: 0.7, failIfTrue: false, ideal: true, reason: "Any residue (chalk, sand) is a sign of adulteration." },
+                        { q: "Are the crystals uniform in size?", type: "boolean", weight: 0.3, failIfTrue: false, ideal: true, reason: "While not definitive, large variations can be a sign of mixing." }
+                    ]
+                },
+                {
+                    id: "pulses",
+                    name: "Pulses (Lentils)",
+                    image: "images/pulses.jpg",
+                    description: "Various lentils and pulses - check for artificial coloring and stone particles.",
+                    adulterations: [
+                        { name: "Metanil yellow", explanation: "Toxic coloring agent", severity: "critical" },
+                        { name: "Stones/Gravel", explanation: "To increase weight", severity: "medium" },
+                        { name: "Khesari dal", explanation: "Cheaper, neurotoxic pulse mixed with others", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "pulse-soak",
+                            title: "Soaking Test",
+                            instructions: [
+                                "Soak pulses in warm water for 30 minutes.",
+                                "Check the water color.",
+                                "Rub a few lentils with a wet paper towel."
+                            ],
+                            expectedOutcome: "Artificially colored pulses will release color into the water or onto the paper towel. Pure pulses will not.",
+                            videoUrl: "http://www.youtube.com/watch?v=hOFopNec34A"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Color leaching test", why: "Detects artificial colors", approxCost: "$30-40" },
+                        { name: "Khesari dal detection", why: "Identifies neurotoxic pulse", approxCost: "$40-50" }
+                    ],
+                    questions: [
+                        { q: "Do they have an unnaturally bright, uniform color?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "This is a strong indicator of artificial dyes like Metanil yellow." },
+                        { q: "Do you find small stones or dirt when sorting?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "This is a common, low-tech adulteration to add weight." }
+                    ]
+                },
+                {
+                    id: "coffee-powder",
+                    name: "Coffee Powder",
+                    image: "images/coffee-powder.jpg",
+                    description: "Ground coffee, often adulterated with chicory, tamarind seeds, or date seeds.",
+                    adulterations: [
+                        { name: "Chicory powder", explanation: "Cheaper filler, adds bitterness", severity: "medium" },
+                        { name: "Tamarind seed powder", explanation: "Adds bulk and color", severity: "high" },
+                        { name: "Date seed powder", explanation: "Used as a filler", severity: "high" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "coffee-float",
+                            title: "Float Test",
+                            instructions: [
+                                "Gently sprinkle coffee powder on the surface of a glass of water.",
+                                "Observe for 2-3 minutes."
+                            ],
+                            expectedOutcome: "Pure coffee powder floats. Adulterants like chicory or tamarind seed powder are denser and will start sinking, leaving a colored trail.",
+                            videoUrl: "http://www.youtube.com/watch?v=sYbDsnT5WvY"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Microscopic analysis", why: "Identifies chicory and tamarind cell structures", approxCost: "$30-40" }
+                    ],
+                    questions: [
+                        { q: "Does most of the powder sink immediately?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "Pure coffee is less dense and should float." },
+                        { q: "Does the water turn brownish quickly, even without stirring?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "Chicory releases color in cold water much faster than coffee." }
+                    ]
+                },
+                {
+                    id: "chilli-powder",
+                    name: "Red Chilli Powder",
+                    image: "images/chilli-powder.jpg",
+                    description: "Ground red chilli, often mixed with brick powder, artificial colors, or sawdust.",
+                    adulterations: [
+                        { name: "Brick powder", explanation: "Adds bulk and color, causes digestive issues", severity: "critical" },
+                        { name: "Artificial colors (Sudan dyes)", explanation: "Carcinogenic dyes added for color", severity: "critical" },
+                        { name: "Sawdust", explanation: "Used as filler", severity: "high" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "chilli-water",
+                            title: "Water Test",
+                            instructions: [
+                                "Add a spoonful of chilli powder to a glass of water.",
+                                "Let it sit for 5 minutes."
+                            ],
+                            expectedOutcome: "Pure chilli powder will not dissolve much and will settle slowly. Brick powder will sink quickly. Artificial colors will streak the water red.",
+                            videoUrl: "http://www.youtube.com/watch?v=Ews2NNFV7GQ"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Chromatography for Sudan Dyes", why: "Detects banned carcinogenic colors", approxCost: "$60-80" },
+                        { name: "Ash content analysis", why: "High ash content suggests brick powder or sand", approxCost: "$30-40" }
+                    ],
+                    questions: [
+                        { q: "Is the powder gritty when rubbed between fingers?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "Grit can indicate sand or brick powder." },
+                        { q: "Does it leave a bright red color on a wet paper towel?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "Natural chilli powder stains, but an immediate, bright dye-like color suggests artificial colors." }
+                    ]
+                },
+                {
+                    id: "black-pepper",
+                    name: "Black Pepper (Whole)",
+                    image: "images/black-pepper.jpg",
+                    description: "Whole peppercorns, sometimes mixed with papaya seeds or mineral oil.",
+                    adulterations: [
+                        { name: "Papaya seeds", explanation: "Similar appearance, cheaper substitute", severity: "high" },
+                        { name: "Mineral oil coating", explanation: "Added for a shiny appearance", severity: "medium" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "pepper-float",
+                            title: "Water Float Test",
+                            instructions: [
+                                "Put a small handful of peppercorns into a glass of water."
+                            ],
+                            expectedOutcome: "Pure, heavy black peppercorns will sink. Lighter peppercorns and papaya seeds will float.",
+                            videoUrl: "http://www.youtube.com/watch?v=IhJXfLGDIRs"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Microscopic analysis", why: "Distinguishes papaya seed structure", approxCost: "$30-40" }
+                    ],
+                    questions: [
+                        { q: "Do many of the 'peppercorns' float in water?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "Papaya seeds and hollow peppercorns float, good peppercorns sink." },
+                        { q: "Do the seeds look overly shiny or have a kerosine-like smell?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "This indicates a mineral oil coating." }
+                    ]
+                },
+                {
+                    id: "tea-leaves",
+                    name: "Tea Leaves",
+                    image: "images/tea-leaves.jpg",
+                    description: "Dried tea leaves, which can be mixed with used tea leaves or artificial colors.",
+                    adulterations: [
+                        { name: "Used tea leaves", explanation: "Exhausted leaves, dried and re-added", severity: "high" },
+                        { name: "Artificial colors", explanation: "To color the used leaves", severity: "critical" },
+                        { name: "Sawdust", explanation: "Used as filler", severity: "high" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "tea-paper",
+                            title: "Cold Water & Paper Test",
+                            instructions: [
+                                "Sprinkle tea leaves on a wet white paper towel.",
+                                "Alternatively, add tea leaves to a glass of cold water.",
+                                "Observe for color."
+                            ],
+                            expectedOutcome: "Pure tea leaves will not release color on the wet paper or in cold water. Artificially colored leaves will immediately stain the paper or the cold water.",
+                            videoUrl: "http://www.youtube.com/watch?v=GuAFkFd2e24"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Color leaching test", why: "Detects artificial colors", approxCost: "$30-40" }
+                    ],
+                    questions: [
+                        { q: "Does it release color in cold water?", type: "boolean", weight: 0.7, failIfTrue: true, ideal: false, reason: "This is a definite sign of artificial dyes." },
+                        { q: "Do the leaves look unnaturally black or shiny?", type: "boolean", weight: 0.3, failIfTrue: true, ideal: false, reason: "Can indicate graphite or other polishing agents." }
+                    ]
+                },
+                {
+                    id: "apples",
+                    name: "Apples (Wax Coating)",
+                    image: "images/apples.jpg",
+                    description: "Fresh apples, often coated with wax to improve shelf life and appearance.",
+                    adulterations: [
+                        { name: "Petroleum-based wax", explanation: "Non-edible wax used instead of natural shellac", severity: "high" },
+                        { name: "Morpholine", explanation: "Solvent used in wax, can be toxic", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "apple-scratch",
+                            title: "Blade Scratch Test",
+                            instructions: [
+                                "Take a sharp knife or blade.",
+                                "Gently scratch the surface of the apple.",
+                                "Observe what comes off."
+                            ],
+                            expectedOutcome: "A natural wax coating is very thin. If a thick, waxy, white substance flakes off, it is likely an artificial petroleum-based wax coating.",
+                            videoUrl: "http://www.youtube.com/watch?v=c7-5Ebiojsk"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Wax composition analysis", why: "Identifies non-edible petroleum waxes", approxCost: "$50-70" }
+                    ],
+                    questions: [
+                        { q: "Is the apple unnaturally shiny, almost like plastic?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "A sign of a heavy, artificial wax coat." },
+                        { q: "Does a white, waxy powder flake off when scratched?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "This confirms an artificial wax coating." }
+                    ]
+                },
+                {
+                    id: "green-peas",
+                    name: "Green Peas",
+                    image: "images/green-peas.jpg",
+                    description: "Fresh or frozen green peas, sometimes dyed to look fresher.",
+                    adulterations: [
+                        { name: "Malachite green", explanation: "A toxic, carcinogenic dye used to enhance color", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "peas-soak",
+                            title: "Soaking Test",
+                            instructions: [
+                                "Put a handful of peas in a glass of water.",
+                                "Stir and let sit for 30 minutes.",
+                                "Observe the water."
+                            ],
+                            expectedOutcome: "Pure peas will not color the water. If the water turns green, it indicates the presence of artificial dye like Malachite Green.",
+                            videoUrl: "http://www.youtube.com/watch?v=g-g8aXIoZfE"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Chromatography for Dyes", why: "Detects Malachite Green", approxCost: "$60-80" }
+                    ],
+                    questions: [
+                        { q: "Does the water turn green after soaking the peas?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "This is a direct sign of toxic artificial dyes." }
+                    ]
+                },
+                {
+                    id: "coriander-powder",
+                    name: "Coriander Powder",
+                    image: "images/coriander-powder.jpg",
+                    description: "Ground coriander, often adulterated with sawdust, dung powder, or starch.",
+                    adulterations: [
+                        { name: "Sawdust", explanation: "Used as filler", severity: "high" },
+                        { name: "Dung powder", explanation: "Dried and powdered horse dung as filler", severity: "critical" },
+                        { name: "Starch", explanation: "Used as a bulking agent", severity: "medium" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "coriander-float",
+                            title: "Water Float Test",
+                            instructions: [
+                                "Sprinkle a pinch of coriander powder on the surface of water.",
+                                "Observe."
+                            ],
+                            expectedOutcome: "Pure coriander powder will mostly float or sink very slowly. Adulterants like sawdust or dung powder will float, while heavier particles sink.",
+                            videoUrl: "http://www.youtube.com/watch?v=R-3jHiikb3Q"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Microscopic analysis", why: "Identifies sawdust and other foreign matter", approxCost: "$40-50" }
+                    ],
+                    questions: [
+                        { q: "Does it have a weak or 'musty' smell instead of a fresh, citrusy aroma?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "Fillers dilute the natural aroma." },
+                        { q: "Does it form a pasty, starchy texture when mixed with water?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "Indicates adulteration with starch." }
+                    ]
+                },
+                {
+                    id: "saffron",
+                    name: "Saffron",
+                    image: "images/saffron.jpg",
+                    description: "Saffron strands (stigmas), often faked with dyed corn silk or other plant fibers.",
+                    adulterations: [
+                        { name: "Dyed corn silk", explanation: "Cheaper material dyed to look like saffron", severity: "high" },
+                        { name: "Safflower strands", explanation: "A different, cheaper plant", severity: "medium" },
+                        { name: "Artificial color", explanation: "To enhance color", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "saffron-soak",
+                            title: "Cold Water Test",
+                            instructions: [
+                                "Place a few strands of saffron in a glass of cold water.",
+                                "Observe the color release."
+                            ],
+                            expectedOutcome: "Pure saffron releases its yellow-orange color slowly and the strand itself will not lose its color. Fake saffron (dyed) will release color immediately and the strand will become pale.",
+                            videoUrl: "http://www.youtube.com/watch?v=OqiQK-4edgM"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Spectrophotometry (Crocin level)", why: "Measures the actual color intensity/purity", approxCost: "$80-100" }
+                    ],
+                    questions: [
+                        { q: "Does it release a strong red color immediately in cold water?", type: "boolean", weight: 0.7, failIfTrue: true, ideal: false, reason: "This is a sign of artificial dye." },
+                        { q: "Does the strand itself lose its color and turn pale?", type: "boolean", weight: 0.3, failIfTrue: true, ideal: false, reason: "Fake saffron (like corn silk) is just a dyed fiber." }
+                    ]
+                },
+                {
+                    id: "ice-cream",
+                    name: "Ice Cream",
+                    image: "images/ice-cream.jpg",
+                    description: "Frozen dairy dessert, sometimes adulterated with washing powder.",
+                    adulterations: [
+                        { name: "Washing powder (Detergent)", explanation: "Added to increase foam and volume", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "ice-cream-lemon",
+                            title: "Lemon Juice Test",
+                            instructions: [
+                                "Let a small amount of ice cream melt.",
+                                "Add a few drops of lemon juice to the melted liquid.",
+                                "Observe for foaming or bubbles."
+                            ],
+                            expectedOutcome: "If the mixture froths or bubbles, it indicates the presence of washing powder (which is alkaline). Pure ice cream will simply curdle.",
+                            videoUrl: "http://www.youtube.com/watch?v=lfm59Uu0GK4"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Chemical analysis for carbonates", why: "Detects washing soda/powder", approxCost: "$40-50" }
+                    ],
+                    questions: [
+                        { q: "Does it froth and bubble when lemon juice is added?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "This is a direct indication of alkaline washing powder." }
+                    ]
+                },
+                {
+                    id: "coconut-oil",
+                    name: "Coconut Oil",
+                    image: "images/coconut-oil.jpg",
+                    description: "Solid-at-room-temp coconut oil, can be mixed with other cheaper liquid oils.",
+                    adulterations: [
+                        { name: "Liquid paraffin", explanation: "Mineral oil, non-edible", severity: "critical" },
+                        { name: "Other vegetable oils", explanation: "Cheaper oils to increase volume", severity: "high" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "coconut-fridge",
+                            title: "Refrigeration Test",
+                            instructions: [
+                                "Place a jar of the coconut oil in the refrigerator for 1 hour.",
+                                "Observe the solidification."
+                            ],
+                            expectedOutcome: "Pure coconut oil solidifies completely and uniformly. If it's adulterated with other oils, they may form a separate liquid layer on top or the mixture will be slushy.",
+                            videoUrl: "http://www.youtube.com/watch?v=1-jnsfhmjaQ"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Saponification value", why: "Identifies the type of fat", approxCost: "$50-60" }
+                    ],
+                    questions: [
+                        { q: "Does it solidify completely in the fridge?", type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: "Pure coconut oil has a high melting point and should solidify." },
+                        { q: "Does a separate liquid layer form when refrigerated?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "This indicates mixing with other oils that have a lower freezing point." }
+                    ]
+                },
+                {
+                    id: "wheat-flour",
+                    name: "Wheat Flour (Atta)",
+                    image: "images/wheat-flour.jpg",
+                    description: "Milled wheat flour, can be adulterated with excess bran, chalk, or sand.",
+                    adulterations: [
+                        { name: "Chalk powder", explanation: "Adds weight", severity: "high" },
+                        { name: "Excess bran", explanation: "Cheaper filler, removed from finer flours and added back", severity: "medium" },
+                        { name: "Boric acid", explanation: "Added as a preservative", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "flour-water",
+                            title: "Water Float Test",
+                            instructions: [
+                                "Sprinkle a spoonful of flour onto a glass of water.",
+                                "Observe what floats."
+                            ],
+                            expectedOutcome: "Pure flour will float or be suspended. Heavier adulterants like sand or chalk will sink. Excess bran will float noticeably on the surface.",
+                            videoUrl: "http://www.youtube.com/watch?v=azBztyWRwpY"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Acid-insoluble ash test", why: "Detects sand and chalk", approxCost: "$30-40" }
+                    ],
+                    questions: [
+                        { q: "Does the dough feel excessively rough or fibrous?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "Indicates excess bran." },
+                        { q: "Does a residue settle when mixed with water?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "Indicates chalk or sand." }
+                    ]
+                },
+                {
+                    id: "fish",
+                    name: "Fish (Fresh)",
+                    image: "images/fish.jpg",
+                    description: "Fresh fish, sometimes preserved with Formalin to prevent spoilage.",
+                    adulterations: [
+                        { name: "Formalin (Formaldehyde)", explanation: "Toxic preservative used to mask spoilage", severity: "critical" }
+                    ],
+                    homeTests: [
+                        {
+                            id: "fish-formalin",
+                            title: "Formalin Test",
+                            instructions: [
+                                "Take 4g of fish, mash it, and mix with 10ml of distilled water.",
+                                "Filter the liquid into a test tube.",
+                                "Add 2-3 drops of Tollen's reagent (or a commercial test kit).",
+                                "Warm gently."
+                            ],
+                            expectedOutcome: "The formation of a silver mirror or a black precipitate indicates the presence of formaldehyde (Formalin).",
+                            videoUrl: "http://www.youtube.com/watch?v=kYrqWQu_rFc"
+                        }
+                    ],
+                    labTests: [
+                        { name: "Formaldehyde detection kit", why: "Quantitative analysis of Formalin", approxCost: "$20-30" }
+                    ],
+                    questions: [
+                        { q: "Does the fish have an unnaturally pungent, 'chemical' smell?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "This is a key sign of Formalin." },
+                        { q: "Are the gills bright red but the fish feels rubbery and hard?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "Formalin 'fixes' the tissue, making it hard, while the color may still look fresh." }
+                    ]
+                },
+                {
+                    id: "cucumber",
+                    name: "Cucumber",
+                    image: "images/cucumber.jpg",
+                    description: "Fresh cucumbers, sometimes waxed or dyed for better appearance.",
+                    adulterations: [
+                        { name: "Wax coating", explanation: "Used for shine and longer shelf life", severity: "medium" },
+                        { name: "Artificial dye", explanation: "Color added to enhance green appearance", severity: "high" }
+                    ],
+                    homeTests: [
+                        { id: "cucumber-scratch", title: "Scratch Test", instructions: ["Scratch the skin with a knife."], expectedOutcome: "If a color comes off, dye may have been used.", videoUrl: "http://www.youtube.com/watch?v=sso_P8thc9Q" }
+                    ],
+                    labTests: [
+                        { name: "Surface dye detection", why: "Detects synthetic food colors", approxCost: "$20-30" } 
+                    ],
+                    questions: [
+                        { q: "Does the cucumber stain your fingers or knife?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "Cucumbers should not leave dye on touch or scratch." }
+                    ]
+                },
+ 
+                {
+                    id: "rice",
+                    name: "Rice",
+                    image: "images/rice.jpg",
+                    description: "Rice grains, sometimes mixed with plastic rice or stones.",
+                    adulterations: [
+                        { name: "Plastic rice", explanation: "Fake rice grains made from synthetic materials", severity: "critical" },
+                        { name: "Small stones", explanation: "Used to increase weight", severity: "medium" }
+                    ],
+                    homeTests: [
+                        { id: "rice-water", title: "Water Test", instructions: ["Drop rice grains in water, stir and look for floating grains."], expectedOutcome: "Plastic rice floats. Natural rice generally sinks.", videoUrl: "http://www.youtube.com/watch?v=hz7ru9P-U7M" }
+                    ],
+                    labTests: [
+                        { name: "Microscopic examination", why: "Identifies fake/unnatural grains", approxCost: "$20-30" }
+                    ],
+                    questions: [
+                        { q: "Do many grains float in water?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "Normal rice sinks; floating grains could be plastic." }
+                    ]
+                },
+                {
+                    id: "mustard-oil",
+                    name: "Mustard Oil",
+                    image: "images/mustard-oil.jpg",
+                    description: "Mustard oil, sometimes mixed with Argemone oil (toxic).",
+                    adulterations: [
+                        { name: "Argemone oil", explanation: "Toxic oil added for cheap adulteration", severity: "critical" } 
+                    ],
+                    homeTests: [
+                        { id: "mustard-acid", title: "Acid Test", instructions: ["Mix a small quantity of oil with nitric acid."], expectedOutcome: "A red color indicates Argemone oil is present.", videoUrl: "http://www.youtube.com/watch?v=98eRZgbH4og" }
+                    ],
+                    labTests: [
+                        { name: "Thin Layer Chromatography", why: "Definitively detects Argemone oil", approxCost: "$40-70" }
+                    ],
+                    questions: [
+                        { q: "Is the oil extremely pungent or bitter?", type: "boolean", weight: 1.0, failIfTrue: false, ideal: true, reason: "Mustard oil is strong but not bitter as Argemone." }
+                    ]
+                },
+                {
+                    id: "yogurt",
+                    name: "Yogurt (Curd)",
+                    image: "images/yogurt.jpg",
+                    description: "Yogurt may contain milk powder or thickeners instead of fresh milk.",
+                    adulterations: [
+                        { name: "Milk powder", explanation: "Used to mimic thickness of real curd", severity: "medium" },
+                        { name: "Starch", explanation: "Added for extra consistency", severity: "medium" } 
+                    ],
+                    homeTests: [
+                        { id: "yogurt-iodine", title: "Iodine Test", instructions: ["Add few drops of iodine to yogurt and observe."], expectedOutcome: "Blue-black color indicates starch presence.", videoUrl: "http://www.youtube.com/watch?v=Hy41dqjjoYU" }
+                    ],
+                    labTests: [
+                        { name: "Dairy composition analysis", why: "Checks milk powder or additives", approxCost: "$20-40" }
+                    ],
+                    questions: [
+                        { q: "Does it turn bluish with iodine?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "Color change means starch, not real curd." }
+                    ]
+                }
+            ]
+        };
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.body.dataset.theme = currentTheme;
+            if (currentTheme === 'dark') {
+                themeToggle.textContent = '☀️';
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            let newTheme = 'dark';
+            if (document.body.dataset.theme === 'dark') {
+                newTheme = 'light';
+                themeToggle.textContent = '🌙';
+            } else {
+                themeToggle.textContent = '☀️';
+            }
+            document.body.dataset.theme = newTheme;
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Utility functions
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")})`, 'gi');
+            return text.replace(regex, '<mark>$1</mark>');
+        }
+
+        // --- Localization ---
+        const PRODUCT_NAME_MR = {
+            "Milk": "दूध",
+            "Honey": "मध",
+            "Turmeric Powder": "हळद पावडर",
+            "Ghee (Clarified Butter)": "तूप",
+            "Olive Oil": "ऑलिव्ह तेल",
+            "Mixed Spices (Garam Masala)": "गरम मसाला",
+            "Sugar": "साखर",
+            "Pulses (Lentils)": "डाळी",
+            "Coffee Powder": "कॉफी पावडर",
+            "Red Chilli Powder": "लाल तिखट",
+            "Black Pepper (Whole)": "काळी मिरी",
+            "Tea Leaves": "चहा पाने",
+            "Apples (Wax Coating)": "सफरचंद (वॅक्स)",
+            "Green Peas": "हिरवे वाटाणे",
+            "Coriander Powder": "धणे पावडर",
+            "Saffron": "केशर",
+            "Ice Cream": "आईस्क्रीम",
+            "Coconut Oil": "नारळ तेल",
+            "Wheat Flour (Atta)": "गहू पीठ (आटा)",
+            "Fish (Fresh)": "मासे (ताजे)",
+            "Cucumber": "काकडी",
+            "Rice": "तांदूळ",
+            "Mustard Oil": "मोहरीचे तेल",
+            "Yogurt (Curd)": "दही"
+        };
+
+        const UI_TEXT = {
+            en: {
+                appTitle: 'Food Safety Guide',
+                heroTitle: 'Food Adulteration Testing Guide',
+                heroSubtitle: "Verify the authenticity of your food with simple home tests and expert guidance.",
+                searchPlaceholder: 'Search for a food item (e.g., milk, honey, turmeric)',
+                resultsNone: 'No search results found.',
+                viewTests: 'View Tests',
+                video: 'Video',
+                qaCheck: 'Q & A Check',
+                calcScore: 'Calculate Score',
+                showIssues: 'Show Issues',
+                clear: 'Clear',
+                productDetails: 'Product Details',
+                commonAdulterations: 'Common Adulterations',
+                professionalLabTests: 'Professional Lab Tests',
+                homeTests: 'Home Tests'
+            },
+            mr: {
+                appTitle: 'अन्न सुरक्षा मार्गदर्शक',
+                heroTitle: 'अन्न भेसळ तपासणी मार्गदर्शक',
+                heroSubtitle: "सोप्या घरगुती चाचण्यांनी तुमच्या अन्नाची खरी ओळख तपासा.",
+                searchPlaceholder: 'अन्न वस्तू शोधा (उदा., दूध, मध, हळद)',
+                resultsNone: 'कोणतेही निकाल सापडले नाहीत.',
+                viewTests: 'चाचण्या पहा',
+                video: 'व्हिडिओ',
+                qaCheck: 'प्र. आणि उ. तपासणी',
+                calcScore: 'स्कोअर काढा',
+                showIssues: 'समस्या दाखवा',
+                clear: 'रीसेट',
+                productDetails: 'उत्पादन तपशील',
+                commonAdulterations: 'सामान्य भेसळ',
+                professionalLabTests: 'व्यावसायिक प्रयोगशाळा चाचण्या',
+                homeTests: 'घरच्या घरी चाचण्या'
+            }
+        };
+
+        function getLang(){ return localStorage.getItem('lang') || 'en'; }
+        function setLang(lang){ localStorage.setItem('lang', lang); }
+
+        function localizeStaticUI(lang){
+            const t = UI_TEXT[lang] || UI_TEXT.en;
+            const logo = document.querySelector('.logo'); if (logo) logo.textContent = t.appTitle;
+            const heroTitle = document.getElementById('hero-title'); if (heroTitle) heroTitle.textContent = t.heroTitle;
+            const heroP = document.querySelector('.hero p'); if (heroP) heroP.textContent = t.heroSubtitle;
+            const search = document.getElementById('food-search'); if (search) search.placeholder = t.searchPlaceholder;
+            const modalTitle = document.getElementById('modal-title'); if (modalTitle) modalTitle.textContent = t.productDetails;
+            // Modal section headings
+            const cards = document.querySelectorAll('#left-col .card h3');
+            if (cards && cards.length >= 3){
+                if (cards[0]) cards[0].textContent = t.commonAdulterations;
+                if (cards[1]) cards[1].textContent = t.professionalLabTests;
+                if (cards[2]) cards[2].textContent = t.homeTests;
+            }
+            const videoH3 = document.querySelector('.video-card h3'); if (videoH3) videoH3.textContent = t.video;
+            const qaH3 = document.querySelector('.qa-card h3'); if (qaH3) qaH3.textContent = t.qaCheck;
+            const calcBtn = document.getElementById('calculate-score-btn'); if (calcBtn) calcBtn.textContent = t.calcScore;
+            const showBtn = document.getElementById('show-wrong-btn'); if (showBtn) showBtn.textContent = t.showIssues;
+            const clearBtn = document.getElementById('clear-qa'); if (clearBtn) clearBtn.textContent = t.clear;
+        }
+
+        function localizeItemName(name, lang){
+            if (lang !== 'mr') return name;
+            return PRODUCT_NAME_MR[name] || name;
+        }
+
+        // Provide generic fallback questions to ensure every product has 5 questions
+        const GENERIC_QUESTION_BANK = [
+            { q: "Is the color natural-looking rather than overly bright?", type: "boolean", weight: 0.2, failIfTrue: false, ideal: true, reason: "Overly bright colors may indicate artificial dyes." },
+            { q: "Does the aroma smell fresh and characteristic for this product?", type: "boolean", weight: 0.2, failIfTrue: false, ideal: true, reason: "Atypical or weak aroma can suggest adulteration or staleness." },
+            { q: "Do you notice any unusual residues when mixed with water?", type: "boolean", weight: 0.2, failIfTrue: true, ideal: false, reason: "Sediment or scum may indicate fillers or contaminants." },
+            { q: "Is the texture consistent with what you expect for this product?", type: "boolean", weight: 0.2, failIfTrue: true, ideal: false, reason: "Grittiness or sliminess can signal impurities or additives." },
+            { q: "How would you rate the taste compared to a trusted brand?", type: "choice", options: ["Off/Strange", "Acceptable", "Typical/Good"], weight: 0.2, ideal: "Typical/Good", reason: "Atypical taste can indicate dilution or mixing." }
+        ];
+
+        function ensureFiveQuestions(questions) {
+            const result = Array.isArray(questions) ? [...questions] : [];
+            let i = 0;
+            while (result.length < 5 && i < GENERIC_QUESTION_BANK.length) {
+                result.push(GENERIC_QUESTION_BANK[i]);
+                i++;
+            }
+            return result.slice(0, 5);
+        }
+
+        // Currency: Convert USD strings (e.g., "$20-30") to INR (e.g., "₹1,660–₹2,490")
+        function formatINR(n){
+            try { return new Intl.NumberFormat('en-IN').format(n); } catch(e){ return String(n); }
+        }
+        function convertUsdTextToInr(text, rate = 83){
+            if (!text || typeof text !== 'string') return text;
+            // Matches patterns like $20-30 or $50
+            const rangeMatch = text.match(/^\$(\d{1,3})(?:-(\d{1,3}))?$/);
+            if (!rangeMatch) return text; // return as-is if not a pure USD price field
+            const low = parseInt(rangeMatch[1], 10);
+            const high = rangeMatch[2] ? parseInt(rangeMatch[2], 10) : null;
+            if (Number.isNaN(low)) return text;
+            const lowInr = Math.round(low * rate);
+            if (high !== null && !Number.isNaN(high)){
+                const highInr = Math.round(high * rate);
+                return `₹${formatINR(lowInr)}–₹${formatINR(highInr)}`;
+            }
+            return `₹${formatINR(lowInr)}`;
+        }
+
+        /**
+         * Creates a dynamic SVG placeholder image as a data URI.
+         * @param {string} text - The text to display on the placeholder.
+         */
+        function createPlaceholder(text) {
+            // Sanitize text for SVG and URL
+            const safeText = encodeURIComponent(text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;'));
+            
+            // A simple SVG template using hex codes for theme colors
+            // Light: fill='%23e2e8f0' (border), fill='%2364748b' (text-muted)
+            // Dark: fill='%23334155' (border), fill='%2394a3b8' (text-muted)
+            // We'll use the light theme for simplicity as data URIs can't read CSS vars
+            const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e2e8f0'/><text x='50' y='55' font-family='Inter, sans-serif' font-size='12' fill='%2364748b' text-anchor='middle'>${safeText}</text></svg>`;
+            
+            return `data:image/svg+xml,${svg}`;
+        }
+
+
+        // Search and Display Functions
+        function filterItems(query) {
+            const items = JSON.parse(localStorage.getItem('foodItems') || '[]');
+            query = query.toLowerCase().trim();
+            
+            return items.filter(item => 
+                item.name.toLowerCase().includes(query) ||
+                item.description.toLowerCase().includes(query) ||
+                item.adulterations.some(a => 
+                    a.name.toLowerCase().includes(query) ||
+                    a.explanation.toLowerCase().includes(query)
+                )
+            );
+        }
+
+        function createProductCard(item, query = '') {
+            const li = document.createElement('li');
+            li.className = 'product-card';
+            
+            // Create a placeholder URI based on the item's name
+            const lang = getLang();
+            const localizedName = localizeItemName(item.name, lang);
+            const placeholderSrc = createPlaceholder(localizedName);
+            
+            li.innerHTML = `
+                <a href="product.html?id=${item.id}" aria-label="${item.name}">
+                    <img src="${item.image}" 
+                         alt="${localizedName}" 
+                         class="product-image"
+                         loading="lazy" decoding="async"
+                         onerror="this.src='${placeholderSrc}'; this.onerror=null;">
+                </a>
+                <div class="product-content">
+                    <h3 class="product-title">
+                        ${highlightText(localizedName, query)}
+                    </h3>
+                    <p class="product-description">
+                        ${highlightText(item.description, query)}
+                    </p>
+                    <div class="product-tags">
+                        ${item.adulterations.map(a => `
+                            <span class="tag tag-${a.severity}">
+                                ${highlightText(a.name, query)}
+                            </span>
+                        `).join('')}
+                    </div>
+                    <a href="product.html?id=${item.id}" class="btn btn-primary">
+                        ${(UI_TEXT[lang]||UI_TEXT.en).viewTests}
+                    </a>
+                </div>
+            `;
+            
+            return li;
+        }
+
+        // --- Product Modal Logic (moved from product.html) ---
+        function calculateScore(answers, questions) {
+            let totalScore = 0;
+            let totalWeight = 0;
+            for (let index = 0; index < questions.length; index++) {
+                const q = questions[index];
+                const answer = answers[index];
+                if (answer === undefined || answer === null) continue;
+                totalWeight += q.weight;
+                if (q.type === 'boolean') {
+                    if (q.failIfTrue) {
+                        if (answer === false) { totalScore += q.weight; }
+                    } else {
+                        if (answer === true) { totalScore += q.weight; }
+                    }
+                } else if (q.type === 'choice') {
+                    if (answer === q.ideal) { totalScore += q.weight; }
+                }
+            }
+            return totalWeight ? (totalScore / totalWeight) * 100 : 0;
+        }
+
+        function submitQA(event, item) {
+            event.preventDefault();
+            const form = document.getElementById('qa-form');
+            const formData = new FormData(form);
+            const answers = [];
+            for (let i = 0; i < (item.questions || []).length; i++) {
+                const q = item.questions[i];
+                const val = formData.get(`q${i}`);
+                if (val === null) {
+                    answers.push(null);
+                } else if (q.type === 'boolean') {
+                    answers.push(val === 'true');
+                } else {
+                    answers.push(val);
+                }
+            }
+            const score = calculateScore(answers, item.questions || []);
+            const resultDiv = document.getElementById('qa-result');
+            resultDiv.hidden = false;
+            let scoreClass = 'success';
+            let message = `Purity Score: ${score.toFixed(0)}%`;
+            if (score < 50) { scoreClass = 'danger'; message += "<br>This product shows strong signs of adulteration."; }
+            else if (score < 80) { scoreClass = 'warning'; message += "<br>This product shows some potential issues. Perform home tests."; }
+            else { message += "<br>This product seems likely to be pure based on your observations."; }
+            resultDiv.className = `qa-result ${scoreClass}`;
+            resultDiv.innerHTML = `<strong>${message}</strong>`;
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function showWrongAnswers(item) {
+            const questions = item.questions || [];
+            const wrong = [];
+            const form = document.getElementById('qa-form');
+            const formData = new FormData(form);
+            for (let i = 0; i < questions.length; i++){
+                const q = questions[i];
+                const val = formData.get(`q${i}`);
+                if (!val) continue;
+                let answer = (q.type === 'boolean') ? (val === 'true') : val;
+                if (q.type === 'boolean') {
+                    if (answer !== q.ideal) { wrong.push({ q: q.q, user: (answer ? 'Yes' : 'No'), reason: q.reason }); }
+                } else if (q.type === 'choice') {
+                    if (answer !== q.ideal) { wrong.push({ q: q.q, user: answer, reason: q.reason }); }
+                }
+            }
+            const res = document.getElementById('qa-result');
+            res.hidden = false;
+            if (wrong.length === 0){
+                res.className = 'qa-result success';
+                res.innerHTML = `<strong>No problematic answers detected.</strong> Based on your answers, the product observations are good.`;
+            } else {
+                res.className = 'qa-result danger';
+                res.innerHTML = `<strong>Potential issues found (${wrong.length}):</strong>` +
+                    `<ul style="margin:0.5rem 0 0 1.1rem">` +
+                    wrong.map(w => `<li><strong>${w.q}</strong><br>Your answer (<em>${w.user}</em>) suggests an issue: ${w.reason}</li>`).join('') +
+                    `</ul>`;
+            }
+            res.scrollIntoView({behavior:'smooth', block:'center'});
+        }
+
+        function clearQAForm(){
+            document.getElementById('qa-form').reset();
+            const res = document.getElementById('qa-result');
+            res.hidden = true; 
+            res.innerHTML = '';
+            res.className = 'qa-result';
+        }
+
+        function renderItem(item){
+            const lang = getLang();
+            document.getElementById('prod-image').style.display = '';
+            document.getElementById('prod-image').src = item.image || '';
+            document.getElementById('prod-image').alt = (localizeItemName(item.name, lang) || 'Image');
+            document.getElementById('prod-title').textContent = localizeItemName(item.name, lang) || '';
+            document.getElementById('prod-desc').textContent = item.description || '';
+            const adulterations = document.getElementById('adulterations-list');
+            adulterations.innerHTML = (item.adulterations || []).map(a => `<span class="tag tag-${a.severity}">${a.name}</span>`).join('');
+            const lab = document.getElementById('lab-tests-list');
+            lab.innerHTML = (item.labTests || []).map(t => `
+                <li>
+                    <strong>${t.name}</strong>
+                    <p>${t.why}</p>
+                    <span>Approx. Cost: ${convertUsdTextToInr(t.approxCost)}</span>
+                </li>
+            `).join('');
+            const ht = document.getElementById('home-tests-list');
+            ht.innerHTML = (item.homeTests || []).map(test => `
+                <div class="test-card">
+                    <h4>${test.title}</h4>
+                    <ol>
+                        ${(test.instructions || []).map(s => `<li>${s}</li>`).join('')}
+                    </ol>
+                    <div class="outcome">
+                        <strong>Expected Outcome:</strong> ${test.expectedOutcome || ''}
+                    </div>
+                </div>
+            `).join('');
+
+            // Set video (prefer the first home test videoUrl if YouTube)
+            const frame = document.getElementById('prod-video');
+            let videoUrl = '';
+            if ((item.homeTests || []).length && item.homeTests[0].videoUrl) {
+                videoUrl = item.homeTests[0].videoUrl;
+            }
+            if (videoUrl && /youtube\.com|youtu\.be/.test(videoUrl)){
+                // Convert to embed form
+                try {
+                    const u = new URL(videoUrl);
+                    if (u.hostname.includes('youtu.be')) {
+                        const id = u.pathname.slice(1);
+                        frame.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&playsinline=1`;
+                    } else {
+                        const id = u.searchParams.get('v');
+                        frame.src = id ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&playsinline=1` : '';
+                    }
+                } catch(e) { frame.src = ''; }
+            } else {
+                frame.src = '';
+            }
+
+            // Ensure 5 questions for every product
+            const paddedQuestions = ensureFiveQuestions(item.questions || []);
+            const qaQs = document.getElementById('qa-questions');
+            qaQs.innerHTML = paddedQuestions.map((q, i) => {
+                let inputHtml = '';
+                if (q.type === 'boolean'){
+                    inputHtml = `
+                        <div class="radio-group">
+                            <label><input type="radio" name="q${i}" value="true" required> Yes</label>
+                            <label><input type="radio" name="q${i}" value="false" required> No</label>
+                        </div>`;
+                } else if (q.type === 'choice'){
+                    inputHtml = `
+                        <select name="q${i}" class="form-input" required>
+                            <option value="">Select an answer...</option>
+                            ${(q.options || []).map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                        </select>`;
+                }
+                return `
+                    <div class="form-group">
+                        <label class="form-label">${q.q}</label>
+                        ${inputHtml}
+                    </div>`;
+            }).join('');
+            const itemWithFiveQs = { ...item, questions: paddedQuestions };
+            document.getElementById('calculate-score-btn').onclick = (e) => submitQA(e, itemWithFiveQs);
+            document.getElementById('show-wrong-btn').onclick = () => showWrongAnswers(itemWithFiveQs);
+            document.getElementById('clear-qa').onclick = clearQAForm;
+
+            // Update modal headings/buttons with current language
+            localizeStaticUI(lang);
+        }
+
+        function openProduct(id){
+            let items = [];
+            try { items = JSON.parse(localStorage.getItem('foodItems') || '[]'); } catch(e){ items = []; }
+            const item = items.find(it => it.id === id);
+            const overlay = document.getElementById('product-modal-overlay');
+            if (!item){
+                document.getElementById('left-col').innerHTML = '<h1>Error</h1><p>Item not found. Please close and select another item.</p>';
+                document.getElementById('right-col').hidden = true;
+                overlay.classList.add('open');
+                overlay.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('modal-open');
+                return;
+            }
+            document.getElementById('right-col').hidden = false;
+            renderItem(item);
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeModal(){
+            const overlay = document.getElementById('product-modal-overlay');
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize data (versioned)
+            const DATA_VERSION = '3';
+            const currentVersion = localStorage.getItem('dataVersion');
+            let storedItems;
+            try {
+                storedItems = JSON.parse(localStorage.getItem('foodItems') || '[]');
+            } catch (e) {
+                storedItems = [];
+            }
+
+            if (!Array.isArray(storedItems) || storedItems.length === 0 || currentVersion !== DATA_VERSION) {
+                localStorage.setItem('foodItems', JSON.stringify(sampleData.items));
+                localStorage.setItem('dataVersion', DATA_VERSION);
+            }
+
+            if (!localStorage.getItem('testHistory')) {
+                localStorage.setItem('testHistory', JSON.stringify([]));
+            }
+
+            // Apply saved language
+            const savedLang = getLang();
+            localizeStaticUI(savedLang);
+
+            // Set up search functionality
+            const searchInput = document.getElementById('food-search');
+            const resultsGrid = document.getElementById('results-grid');
+            const suggestions = document.getElementById('search-suggestions');
+
+            // Initial load of all items
+            const items = JSON.parse(localStorage.getItem('foodItems'));
+            if (items) {
+                for (const item of items) {
+                    resultsGrid.appendChild(createProductCard(item));
+                }
+            }
+
+            // Ensure clicks on links always navigate (safety net) -> now opens modal
+            resultsGrid.addEventListener('click', (evt) => {
+                const link = evt.target.closest('a[href^="product.html?id="]');
+                if (link && resultsGrid.contains(link)) {
+                    evt.preventDefault();
+                    const url = new URL(link.getAttribute('href'), window.location.href);
+                    const id = url.searchParams.get('id');
+                    if (id) openProduct(id);
+                }
+            });
+
+            // Modal close handlers
+            document.getElementById('modal-close').addEventListener('click', closeModal);
+            document.getElementById('product-modal-overlay').addEventListener('click', (e) => {
+                if (e.target.id === 'product-modal-overlay') closeModal();
+            });
+
+            // Language toggle
+            const langBtn = document.getElementById('lang-toggle');
+            if (langBtn){
+                langBtn.addEventListener('click', () => {
+                    const current = getLang();
+                    const next = current === 'mr' ? 'en' : 'mr';
+                    setLang(next);
+                    localizeStaticUI(next);
+                    // Re-render grid to refresh localized names and button text
+                    resultsGrid.innerHTML = '';
+                    const itemsNow = JSON.parse(localStorage.getItem('foodItems')) || [];
+                    for (const item of itemsNow) {
+                        resultsGrid.appendChild(createProductCard(item));
+                    }
+                });
+            }
+
+            // Search input handler
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value;
+                const filteredItems = filterItems(query);
+                
+                // Update results grid
+                resultsGrid.innerHTML = '';
+                if(filteredItems.length === 0) {
+                    const t = UI_TEXT[getLang()] || UI_TEXT.en;
+                    resultsGrid.innerHTML = `<li style="padding:2rem; text-align:center; color:var(--color-text-muted); font-size:1.2rem;">${t.resultsNone}</li>`;
+                } else {
+                    for (const item of filteredItems) {
+                        resultsGrid.appendChild(createProductCard(item, query));
+                    }
+                }
+                
+                // Update datalist
+                suggestions.innerHTML = filteredItems
+                    .map(item => `<option value="${item.name}">`)
+                    .join('');
+            });
+        });
+    </script>
+</body>
+</html>
