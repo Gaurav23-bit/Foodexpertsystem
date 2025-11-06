@@ -528,6 +528,43 @@
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-md);
         }
+        
+        /* Styles for Home Tests in Modal */
+        .test-card {
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+        .test-card h4 {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+        .test-card ol {
+            padding-left: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-muted);
+        }
+        .test-card .outcome {
+            font-size: var(--font-size-sm);
+            background: var(--color-bg);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+        }
+        
+        /* Styles for Lab Tests in Modal */
+        #lab-tests-list {
+            list-style: none;
+            padding: 0;
+        }
+        #lab-tests-list li {
+            padding: var(--spacing-sm);
+            border-bottom: 1px solid var(--color-border);
+        }
+        #lab-tests-list li:last-child { border-bottom: none; }
+        #lab-tests-list li strong { display: block; font-weight: 600; }
+        #lab-tests-list li p { color: var(--color-text-muted); margin-bottom: 0.25rem; }
+        #lab-tests-list li span { font-size: var(--font-size-sm); color: var(--color-success); }
     </style>
 </head>
 <body>
@@ -546,6 +583,7 @@
                     aria-label="Toggle language">
                 मराठी
             </button>
+            <button id="reset-data" class="theme-toggle" aria-label="Reset product data" title="Reset product data">⤻</button>
         </nav>
     </header>
 
@@ -567,45 +605,41 @@
                        aria-label="Search for a food item"
                        autocomplete="off">
                 <datalist id="search-suggestions">
-                    </datalist>
+                </datalist>
             </div>
         </section>
 
         <section class="results" aria-labelledby="results-title">
             <h2 id="results-title" class="visually-hidden">Search Results</h2>
+            <div id="product-count" style="padding:0.5rem 0; color:var(--color-text-muted); font-size:0.95rem; text-align:center"></div>
             <ul id="results-grid" class="results-grid"></ul>
         </section>
 
-        <!-- In-page Product Details Modal -->
         <div id="product-modal-overlay" class="modal-overlay" aria-hidden="true">
             <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
                 <div class="modal-header">
                     <strong id="modal-title">Product Details</strong>
-                    <button id="modal-close" class="close-btn" aria-label="Close">×</button>
+                    <button id="modal-close" class="theme-toggle" aria-label="Close" style="font-size: 1.5rem; line-height: 1;">×</button>
                 </div>
                 <div class="modal-body">
                     <div class="product-layout">
                         <div id="left-col">
-                            <!-- Overview -->
                             <div class="card" id="overview-card">
                                 <img id="prod-image" class="product-image" src="" alt="Product Image" onerror="this.style.display='none'">
-                                <h1 class="title" id="prod-title">Product Name</h1>
-                                <p class="desc" id="prod-desc">Product description</p>
+                                <h1 class="title" id="prod-title" style="font-size: var(--font-size-2xl); margin-top: var(--spacing-sm);">Product Name</h1>
+                                <p class="desc" id="prod-desc" style="color: var(--color-text-muted); margin-top: var(--spacing-xs);">Product description</p>
                             </div>
 
-                            <!-- Adulterations -->
                             <div class="card">
                                 <h3>Common Adulterations</h3>
-                                <div id="adulterations-list" class="tags-list" style="margin-top: var(--spacing-md);"></div>
+                                <div id="adulterations-list" class="tags-list" style="margin-top: var(--spacing-md); display: flex; flex-wrap: wrap; gap: var(--spacing-xs);"></div>
                             </div>
 
-                            <!-- Lab Tests -->
                             <div class="card">
                                 <h3>Professional Lab Tests</h3>
                                 <ul id="lab-tests-list"></ul>
                             </div>
 
-                            <!-- Home Tests -->
                             <div class="card">
                                 <h3>Home Tests</h3>
                                 <div id="home-tests-list"></div>
@@ -613,13 +647,11 @@
                         </div>
 
                         <div id="right-col">
-                            <!-- Video Top Half -->
                             <div class="card video-card">
                                 <h3>Video</h3>
                                 <iframe id="prod-video" class="video-frame" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
                             </div>
 
-                            <!-- Q&A Bottom Half -->
                             <div class="card qa-card">
                                 <h3>Q & A Check</h3>
                                 <p style="color: var(--color-text-muted); margin-bottom: 1rem;">Answer these observational questions for a quick purity score.</p>
@@ -641,726 +673,885 @@
     </main>
 
     <script>
-        // Sample Data Structure (Standardized Image Paths)
+        // --- Localization ---
+        const UI_TEXT = {
+            en: {
+                appTitle: 'Food Safety Guide',
+                heroTitle: 'Food Adulteration Testing Guide',
+                heroSubtitle: "Verify the authenticity of your food with simple home tests and expert guidance.",
+                searchPlaceholder: 'Search for a food item (e.g., milk, honey, turmeric)',
+                resultsNone: 'No search results found.',
+                viewTests: 'View Tests',
+                video: 'Video',
+                qaCheck: 'Q & A Check',
+                calcScore: 'Calculate Score',
+                showIssues: 'Show Issues',
+                clear: 'Clear',
+                productDetails: 'Product Details',
+                commonAdulterations: 'Common Adulterations',
+                professionalLabTests: 'Professional Lab Tests',
+                homeTests: 'Home Tests',
+                yes: 'Yes',
+                no: 'No',
+                selectAnswer: 'Select an answer...',
+                expectedOutcome: 'Expected Outcome',
+                scorePrefix: 'Purity Score',
+                resultDanger: "This product shows strong signs of adulteration.",
+                resultWarning: "This product shows some potential issues. Perform home tests.",
+                resultSuccess: "This product seems likely to be pure based on your observations.",
+                issuesNone: "<strong>No problematic answers detected.</strong> Based on your answers, the product observations are good.",
+                issuesFound: "<strong>Potential issues found ({count}):</strong>",
+                issueReason: "Your answer (<em>{userAnswer}</em>) suggests an issue: {reason}"
+            },
+            mr: {
+                appTitle: 'अन्न सुरक्षा मार्गदर्शक',
+                heroTitle: 'अन्न भेसळ तपासणी मार्गदर्शक',
+                heroSubtitle: "सोप्या घरगुती चाचण्यांनी तुमच्या अन्नाची खरी ओळख तपासा.",
+                searchPlaceholder: 'अन्न वस्तू शोधा (उदा., दूध, मध, हळद)',
+                resultsNone: 'कोणतेही निकाल सापडले नाहीत.',
+                viewTests: 'चाचण्या पहा',
+                video: 'व्हिडिओ',
+                qaCheck: 'प्र. आणि उ. तपासणी',
+                calcScore: 'स्कोअर काढा',
+                showIssues: 'समस्या दाखवा',
+                clear: 'रीसेट',
+                productDetails: 'उत्पादन तपशील',
+                commonAdulterations: 'सामान्य भेसळ',
+                professionalLabTests: 'व्यावसायिक प्रयोगशाळा चाचण्या',
+                homeTests: 'घरच्या घरी चाचण्या',
+                yes: 'होय',
+                no: 'नाही',
+                selectAnswer: 'उत्तर निवडा...',
+                expectedOutcome: 'अपेक्षित निकाल',
+                scorePrefix: 'शुद्धता स्कोर',
+                resultDanger: "या उत्पादनात भेसळीची तीव्र चिन्हे दिसत आहेत.",
+                resultWarning: "या उत्पादनात काही संभाव्य समस्या दिसत आहेत. घरगुती चाचण्या करा.",
+                resultSuccess: "तुमच्या निरीक्षणांवर आधारित हे उत्पादन शुद्ध असण्याची शक्यता आहे.",
+                issuesNone: "<strong>कोणतीही समस्या आढळली नाही.</strong> तुमच्या उत्तरांवर आधारित, उत्पादनाची निरीक्षणे चांगली आहेत.",
+                issuesFound: "<strong>संभाव्य समस्या आढळल्या ({count}):</strong>",
+                issueReason: "तुमचे उत्तर (<em>{userAnswer}</em>) एक समस्या सूचित करते: {reason}"
+            }
+        };
+
+        function getLang(){ return localStorage.getItem('lang') || 'en'; }
+        function setLang(lang){ localStorage.setItem('lang', lang); }
+
+        /**
+         * Universal translator.
+         * Gets the correct language string from a content object.
+         * @param {object|string} content - The content object (e.g., {en: "Hello", mr: "नमस्कार"}) or a plain string.
+         * @param {string} lang - The current language code (e.g., "mr" or "en").
+         * @returns {string} - The translated string.
+         */
+        function t(content, lang) {
+            if (typeof content === 'object' && content !== null) {
+                return content[lang] || content['en'] || '';
+            }
+            // Fallback for non-translatable or legacy strings
+            return String(content);
+        }
+
+        function localizeStaticUI(lang){
+            const trans = UI_TEXT[lang] || UI_TEXT.en;
+            const logo = document.querySelector('.logo'); if (logo) logo.textContent = trans.appTitle;
+            const heroTitle = document.getElementById('hero-title'); if (heroTitle) heroTitle.textContent = trans.heroTitle;
+            const heroP = document.querySelector('.hero p'); if (heroP) heroP.textContent = trans.heroSubtitle;
+            const search = document.getElementById('food-search'); if (search) search.placeholder = trans.searchPlaceholder;
+            
+            // Modal fields
+            const modalTitle = document.getElementById('modal-title'); if (modalTitle) modalTitle.textContent = trans.productDetails;
+            const cards = document.querySelectorAll('#left-col .card h3');
+            if (cards && cards.length >= 3){
+                if (cards[0]) cards[0].textContent = trans.commonAdulterations;
+                if (cards[1]) cards[1].textContent = trans.professionalLabTests;
+                if (cards[2]) cards[2].textContent = trans.homeTests;
+            }
+            const videoH3 = document.querySelector('.video-card h3'); if (videoH3) videoH3.textContent = trans.video;
+            const qaH3 = document.querySelector('.qa-card h3'); if (qaH3) qaH3.textContent = trans.qaCheck;
+            const calcBtn = document.getElementById('calculate-score-btn'); if (calcBtn) calcBtn.textContent = trans.calcScore;
+            const showBtn = document.getElementById('show-wrong-btn'); if (showBtn) showBtn.textContent = trans.showIssues;
+            const clearBtn = document.getElementById('clear-qa'); if (clearBtn) clearBtn.textContent = trans.clear;
+            
+            // Language Toggle Button Text
+            const langBtn = document.getElementById('lang-toggle');
+            if (langBtn) {
+                langBtn.textContent = (lang === 'mr') ? 'English' : 'मराठी';
+            }
+        }
+        
+        // --- Translatable Generic Q&A Bank ---
+        const GENERIC_QUESTION_BANK = [
+            { q: {en: "Is the color natural-looking rather than overly bright?", mr: "रंग जास्त चमकदार ऐवजी नैसर्गिक दिसतो का?"}, type: "boolean", weight: 0.2, failIfTrue: false, ideal: true, reason: {en: "Overly bright colors may indicate artificial dyes.", mr: "जास्त चमकदार रंग कृत्रिम रंग दर्शवू शकतात."} },
+            { q: {en: "Does the aroma smell fresh and characteristic for this product?", mr: "या उत्पादनाचा सुगंध ताजा आणि वैशिष्ट्यपूर्ण आहे का?"}, type: "boolean", weight: 0.2, failIfTrue: false, ideal: true, reason: {en: "Atypical or weak aroma can suggest adulteration or staleness.", mr: "असामान्य किंवा मंद सुगंध भेसळ किंवा शिळेपणा दर्शवू शकतो."} },
+            { q: {en: "Do you notice any unusual residues when mixed with water?", mr: "पाण्यात मिसळल्यावर काही असामान्य अवशेष दिसतात का?"}, type: "boolean", weight: 0.2, failIfTrue: true, ideal: false, reason: {en: "Sediment or scum may indicate fillers or contaminants.", mr: "गाळ किंवा मळी हे फिलर किंवा दूषित पदार्थ दर्शवू शकतात."} },
+            { q: {en: "Is the texture consistent with what you expect for this product?", mr: "या उत्पादनासाठी अपेक्षित असलेला पोत आहे का?"}, type: "boolean", weight: 0.2, failIfTrue: true, ideal: false, reason: {en: "Grittiness or sliminess can signal impurities or additives.", mr: "खरखरीतपणा किंवा बुळबुळीतपणा अशुद्धता किंवा भेसळ दर्शवू शकतो."} },
+            { q: {en: "How would you rate the taste compared to a trusted brand?", mr: "एका विश्वसनीय ब्रँडच्या तुलनेत चव कशी आहे?"}, type: "choice", options: [{en: "Off/Strange", mr: "विचित्र/खराब"}, {en: "Acceptable", mr: "स्वीकार्य"}, {en: "Typical/Good", mr: "नेहमीसारखी/चांगली"}], weight: 0.2, ideal: "Typical/Good", reason: {en: "Atypical taste can indicate dilution or mixing.", mr: "असामान्य चव भेसळ दर्शवू शकते."} }
+        ];
+
+        function ensureFiveQuestions(questions) {
+            const result = Array.isArray(questions) ? [...questions] : [];
+            let i = 0;
+            while (result.length < 5 && i < GENERIC_QUESTION_BANK.length) {
+                // Check if this generic question is already present (by 'en' text)
+                const q_en = t(GENERIC_QUESTION_BANK[i].q, 'en');
+                if (!result.some(r => t(r.q, 'en') === q_en)) {
+                    result.push(GENERIC_QUESTION_BANK[i]);
+                }
+                i++;
+            }
+            return result.slice(0, 5);
+        }
+
+        // --- Sample Data (Placeholder) ---
+        // --- Sample Data (NOW FULLY TRANSLATABLE) ---
         const sampleData = {
             items: [
                 {
                     id: "milk",
-                    name: "Milk",
+                    name: { en: "Milk", mr: "दूध" },
                     image: "images/milk.jpg",
-                    description: "Fresh cow's milk - commonly targeted for adulteration with water and other substances.",
+                    description: {
+                        en: "Fresh cow's milk - commonly targeted for adulteration with water and other substances.",
+                        mr: "ताजे गायीचे दूध - सामान्यतः पाणी आणि इतर पदार्थांसह भेसळ करण्यासाठी लक्ष्य केले जाते."
+                    },
                     adulterations: [
-                        { name: "Water dilution", explanation: "Reduces nutritional value", severity: "high" },
-                        { name: "Starch", explanation: "Added to increase thickness", severity: "high" },
-                        { name: "Detergent", explanation: "Added to emulate natural properties", severity: "critical" }
-                    ],
-                    videos: [
-                        {
-                            title: "How to Test Milk for Starch",
-                            url: "https://www.youtube.com/embed/dZR7ajFhbpc",
-                            description: "Learn how to perform the iodine test to detect starch in milk."
-                        },
-                        {
-                            title: "Understanding Milk Adulteration",
-                            url: "https://www.youtube.com/embed/SRxPnHh03-s",
-                            description: "A comprehensive guide to detecting common milk adulterants."
-                        }
+                        { name: { en: "Water dilution", mr: "पाण्याची भेसळ" }, explanation: { en: "Reduces nutritional value", mr: "पौष्टिक मूल्य कमी करते" }, severity: "high" },
+                        { name: { en: "Starch", mr: "स्टार्च" }, explanation: { en: "Added to increase thickness", mr: "घट्टपणा वाढवण्यासाठी" }, severity: "high" },
+                        { name: { en: "Detergent", mr: "डिटर्जंट" }, explanation: { en: "Added to emulate natural properties", mr: "नैसर्गिक गुणधर्मांची नक्कल करण्यासाठी" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "milk-iodine",
-                            title: "Iodine Test for Starch",
+                            title: { en: "Iodine Test for Starch", mr: "स्टार्चसाठी आयोडीन चाचणी" },
                             instructions: [
-                                "Take 3ml milk in a test tube.",
-                                "Add 2-3 drops of iodine solution.",
-                                "Observe color change."
+                                { en: "Take 3ml milk in a test tube.", mr: "एका टेस्ट ट्यूबमध्ये ३ मिली दूध घ्या." },
+                                { en: "Add 2-3 drops of iodine solution.", mr: "त्यात आयोडीन सोल्यूशनचे २-३ थेंब टाका." },
+                                { en: "Observe color change.", mr: "रंगातील बदल पहा." }
                             ],
-                            expectedOutcome: "Blue-black color indicates presence of starch. Pure milk remains brownish.",
-                            videoUrl: "http://www.youtube.com/watch?v=ki_eMKbFyo4",
-                            imageUrl: "https://images.unsplash.com/photo-1634141510639-d691d86f47be?auto=format&fit=crop&q=80",
+                            expectedOutcome: {
+                                en: "Blue-black color indicates presence of starch. Pure milk remains brownish.",
+                                mr: "निळा-काळा रंग स्टार्चची उपस्थिती दर्शवतो. शुद्ध दूध तपकिरी राहते."
+                            },
+                            videoUrl: "http://www.youtube.com/watch?v=ki_eMKbFyo4"
                         }
                     ],
                     labTests: [
-                        { name: "Fat content analysis", why: "Detects water dilution", approxCost: "$20-30" },
-                        { name: "Chemical composition test", why: "Detects artificial additives", approxCost: "$50-70" }
+                        { name: { en: "Fat content analysis", mr: "फॅट सामग्री विश्लेषण" }, why: { en: "Detects water dilution", mr: "पाण्याची भेसळ शोधते" }, approxCost: "$20-30" },
+                        { name: { en: "Chemical composition test", mr: "रासायनिक रचना चाचणी" }, why: { en: "Detects artificial additives", mr: "कृत्रिम पदार्थ शोधते" }, approxCost: "$50-70" }
                     ],
                     questions: [
-                        { q: "Does the milk form temporary foam when shaken?", type: "boolean", weight: 0.3, failIfTrue: false, ideal: true, reason: "Good milk has some foam." },
-                        { q: "Does it have a bluish tint?", type: "boolean", weight: 0.3, failIfTrue: true, ideal: false, reason: "A blue tint can indicate water dilution." },
-                        { q: "How does it feel between your fingers?", type: "choice", options: ["Sticky", "Normal", "Watery"], weight: 0.4, ideal: "Normal", reason: "Sticky can mean detergent, watery means dilution."}
+                        { q: { en: "Does the milk form temporary foam when shaken?", mr: "हलवल्यावर दुधाला तात्पुरता फेस येतो का?" }, type: "boolean", weight: 0.3, failIfTrue: false, ideal: true, reason: { en: "Good milk has some foam.", mr: "चांगल्या दुधाला थोडा फेस येतो." } },
+                        { q: { en: "Does it have a bluish tint?", mr: "त्याला निळसर झाक आहे का?" }, type: "boolean", weight: 0.3, failIfTrue: true, ideal: false, reason: { en: "A blue tint can indicate water dilution.", mr: "निळी झाक पाण्याची भेसळ दर्शवू शकते." } },
+                        { q: { en: "How does it feel between your fingers?", mr: "बोटांमध्ये कसे वाटते?" }, type: "choice", options: [{en: "Sticky", mr: "चिकट"}, {en: "Normal", mr: "सामान्य"}, {en: "Watery", mr: "पाण्यासारखे"}], weight: 0.4, ideal: "Normal", reason: { en: "Sticky can mean detergent, watery means dilution.", mr: "चिकट म्हणजे डिटर्जंट, पाण्यासारखे म्हणजे भेसळ."} }
                     ]
                 },
                 {
                     id: "honey",
-                    name: "Honey",
+                    name: { en: "Honey", mr: "मध" },
                     image: "images/honey.jpg",
-                    description: "Natural honey - verify authenticity and detect sugar syrup mixing.",
-                    videos: [
-                        {
-                            title: "Simple Honey Purity Test at Home",
-                            url: "https://www.youtube.com/embed/EyZgasQY5Y0",
-                            description: "Learn how to check honey purity using simple water test at home."
-                        },
-                        {
-                            title: "Detecting Sugar Syrup in Honey",
-                            url: "https://www.youtube.com/embed/S5RvFxPkfwc",
-                            description: "Professional demonstration of methods to identify adulterated honey."
-                        }
-                    ],
+                    description: { en: "Natural honey - verify authenticity and detect sugar syrup mixing.", mr: "नैसर्गिक मध - खरा असल्याची खात्री करा आणि साखरेचा पाक ओळख." },
                     adulterations: [
-                        { name: "Sugar syrup", explanation: "Added to increase volume", severity: "high" },
-                        { name: "Corn syrup", explanation: "Cheaper substitute", severity: "high" },
-                        { name: "Artificial sweeteners", explanation: "To maintain sweetness after dilution", severity: "critical" }
+                        { name: { en: "Sugar syrup", mr: "साखरेचा पाक" }, explanation: { en: "Added to increase volume", mr: "प्रमाण वाढवण्यासाठी" }, severity: "high" },
+                        { name: { en: "Corn syrup", mr: "कॉर्न सिरप" }, explanation: { en: "Cheaper substitute", mr: "स्वस्त पर्याय" }, severity: "high" }
                     ],
                     homeTests: [
                         {
                             id: "honey-water",
-                            title: "Water Dissolution Test",
+                            title: { en: "Water Dissolution Test", mr: "पाण्यात विरघळण्याची चाचणी" },
                             instructions: [
-                                "Put a spoonful of honey in a glass of water.",
-                                "Observe how it settles.",
-                                "Check if it dissolves easily."
+                                { en: "Put a spoonful of honey in a glass of water.", mr: "एक चमचा मध पाण्याच्या ग्लासमध्ये टाका." },
+                                { en: "Observe how it settles.", mr: "ते कसे खाली बसते ते पहा." }
                             ],
-                            expectedOutcome: "Pure honey forms a lump and settles at the bottom. Adulterated honey dissolves quickly.",
-                            videoUrl: "http://www.youtube.com/watch?v=aey2vyV3vWc",
-                            imageUrl: "https://images.unsplash.com/photo-1639668232683-6eb389282574?auto=format&fit=crop&q=80"
+                            expectedOutcome: {
+                                en: "Pure honey forms a lump and settles at the bottom. Adulterated honey dissolves quickly.",
+                                mr: "शुद्ध मध गोळा होऊन तळाशी बसतो. भेसळयुक्त मध पटकन विरघळतो."
+                            },
+                            videoUrl: "http://www.youtube.com/watch?v=aey2vyV3vWc"
                         }
                     ],
                     labTests: [
-                        { name: "Pollen analysis", why: "Confirms natural origin", approxCost: "$40-60" },
-                        { name: "Sugar profile test", why: "Detects added syrups", approxCost: "$30-50" }
+                        { name: { en: "Pollen analysis", mr: "परागकण विश्लेषण" }, why: { en: "Confirms natural origin", mr: "नैसर्गिक स्त्रोत निश्चित करते" }, approxCost: "$40-60" },
+                        { name: { en: "Sugar profile test", mr: "साखर प्रोफाइल चाचणी" }, why: { en: "Detects added syrups", mr: "भेसळयुक्त पाक शोधते" }, approxCost: "$30-50" }
                     ],
                     questions: [
-                        { q: "Does it crystallize over time?", type: "boolean", weight: 0.5, failIfTrue: false, ideal: true, reason: "Pure honey often crystallizes. Non-crystallizing honey might be over-processed or adulterated." },
-                        { q: "How quickly does it dissolve in water?", type: "choice", options: ["Very fast", "Slowly", "Forms a lump"], weight: 0.5, ideal: "Forms a lump", reason: "Pure honey is dense and doesn't dissolve easily." }
+                        { q: { en: "Does it crystallize over time?", mr: "ते कालांतराने घट्ट होते (खडे बनतात) का?" }, type: "boolean", weight: 0.5, failIfTrue: false, ideal: true, reason: { en: "Pure honey often crystallizes.", mr: "शुद्ध मध अनेकदा घट्ट होतो." } },
+                        { q: { en: "How quickly does it dissolve in water?", mr: "ते पाण्यात किती लवकर विरघळते?" }, type: "choice", options: [{en: "Very fast", mr: "खूप वेगाने"}, {en: "Slowly", mr: "हळू"}, {en: "Forms a lump", mr: "गोळा होतो"}], weight: 0.5, ideal: "Forms a lump", reason: { en: "Pure honey is dense and doesn't dissolve easily.", mr: "शुद्ध मध जड असतो आणि सहज विरघळत नाही." } }
                     ]
                 },
                 {
                     id: "turmeric",
-                    name: "Turmeric Powder",
+                    name: { en: "Turmeric Powder", mr: "हळद पावडर" },
                     image: "images/turmeric.jpg",
-                    description: "Ground turmeric powder - verify purity and detect artificial colorants.",
-                    videos: [
-                        {
-                            title: "Turmeric Purity Test at Home",
-                            url: "https://www.youtube.com/embed/mONuFR_BVls",
-                            description: "Simple methods to check if your turmeric powder is pure."
-                        }
-                    ],
+                    description: { en: "Ground turmeric powder - verify purity and detect artificial colorants.", mr: "हळद पावडर - शुद्धता तपासा आणि कृत्रिम रंग ओळखा." },
                     adulterations: [
-                        { name: "Metanil yellow", explanation: "Artificial color, carcinogenic", severity: "critical" },
-                        { name: "Chalk powder", explanation: "Used as cheap filler", severity: "high" },
-                        { name: "Lead chromate", explanation: "Added for color enhancement, highly toxic", severity: "critical" }
+                        { name: { en: "Metanil yellow", mr: "मेटानिल येलो" }, explanation: { en: "Artificial color, carcinogenic", mr: "कृत्रिम रंग, कर्करोगजन्य" }, severity: "critical" },
+                        { name: { en: "Chalk powder", mr: "खडू पावडर" }, explanation: { en: "Used as cheap filler", mr: "स्वस्त फिलर म्हणून वापर" }, severity: "high" },
+                        { name: { en: "Lead chromate", mr: "लेड क्रोमेट" }, explanation: { en: "Added for color enhancement, highly toxic", mr: "रंग वाढवण्यासाठी, अत्यंत विषारी" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "turmeric-water",
-                            title: "Water Test",
+                            title: { en: "Water Test", mr: "पाण्याची चाचणी" },
                             instructions: [
-                                "Add a spoonful to a glass of warm water.",
-                                "Do not stir.",
-                                "Let it settle for 20 minutes."
+                                { en: "Add a spoonful to a glass of warm water.", mr: "एक चमचा (हळद) कोमट पाण्याच्या ग्लासमध्ये टाका." },
+                                { en: "Do not stir.", mr: "ढवळू नका." },
+                                { en: "Let it settle for 20 minutes.", mr: "ते २० मिनिटे स्थिर होऊ द्या." }
                             ],
-                            expectedOutcome: "Pure turmeric settles at the bottom, leaving clear water. Adulterants like chalk powder will settle, and Metanil yellow will streak the water yellow.",
+                            expectedOutcome: {
+                                en: "Pure turmeric settles at the bottom, leaving clear water. Adulterants will streak the water yellow.",
+                                mr: "शुद्ध हळद तळाशी बसते, पाणी स्वच्छ राहते. भेसळ असल्यास पाण्यात पिवळ्या रेषा दिसतील."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=EVZO2xajT4U"
                         }
                     ],
                     labTests: [
-                        { name: "Chromatography", why: "Detects artificial colors", approxCost: "$50-70" },
-                        { name: "Heavy metal screening", why: "Detects lead chromate", approxCost: "$80-100" }
+                        { name: { en: "Chromatography", mr: "क्रोमॅटोग्राफी" }, why: { en: "Detects artificial colors", mr: "कृत्रिम रंग शोधते" }, approxCost: "$50-70" },
+                        { name: { en: "Heavy metal screening", mr: "हेवी मेटल स्क्रीनिंग" }, why: { en: "Detects lead chromate", mr: "लेड क्रोमेट शोधते" }, approxCost: "$80-100" }
                     ],
                     questions: [
-                        { q: "Does it leave a bright yellow color in the water immediately?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "This indicates artificial colors leaking." },
-                        { q: "Does it taste slightly bitter?", type: "boolean", weight: 0.4, failIfTrue: false, ideal: true, reason: "Pure turmeric has a characteristic bitter, musky taste. Chalkiness is a bad sign." }
+                        { q: { en: "Does it leave a bright yellow color in the water immediately?", mr: "ते पाण्यात लगेच चमकदार पिवळा रंग सोडते का?" }, type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: { en: "This indicates artificial colors leaking.", mr: "हे कृत्रिम रंग गळती दर्शवते." } },
+                        { q: { en: "Does it taste slightly bitter?", mr: "त्याची चव किंचित कडू आहे का?" }, type: "boolean", weight: 0.4, failIfTrue: false, ideal: true, reason: { en: "Pure turmeric has a characteristic bitter taste.", mr: "शुद्ध हळदीला एक वैशिष्ट्यपूर्ण कडू चव असते." } }
                     ]
                 },
                 {
                     id: "ghee",
-                    name: "Ghee (Clarified Butter)",
+                    name: { en: "Ghee (Clarified Butter)", mr: "तूप" },
                     image: "images/ghee.jpg",
-                    description: "Clarified butter - check for vegetable oil mixing and artificial colors.",
+                    description: { en: "Clarified butter - check for vegetable oil mixing and artificial colors.", mr: "शुद्ध तूप - वनस्पती तेल आणि कृत्रिम रंगांची भेसळ तपासा." },
                     adulterations: [
-                        { name: "Vegetable oil (Vanaspati)", explanation: "Added as cheaper substitute", severity: "high" },
-                        { name: "Animal fat", explanation: "Non-dairy fat addition", severity: "high" },
-                        { name: "Mashed potatoes", explanation: "Starch to add bulk", severity: "medium" }
+                        { name: { en: "Vegetable oil (Vanaspati)", mr: "वनस्पती तेल (डालडा)" }, explanation: { en: "Added as cheaper substitute", mr: "स्वस्त पर्याय म्हणून" }, severity: "high" },
+                        { name: { en: "Animal fat", mr: "प्राण्यांची चरबी" }, explanation: { en: "Non-dairy fat addition", mr: "गैर-दुग्धजन्य चरबी" }, severity: "high" },
+                        { name: { en: "Mashed potatoes", mr: "उकडलेले बटाटे" }, explanation: { en: "Starch to add bulk", mr: "वजन वाढवण्यासाठी स्टार्च" }, severity: "medium" }
                     ],
                     homeTests: [
                         {
                             id: "ghee-melt",
-                            title: "Palm Test",
+                            title: { en: "Palm Test", mr: "हातावरील चाचणी" },
                             instructions: [
-                                "Take a small amount of ghee in your palm.",
-                                "Wait for it to melt.",
-                                "Observe the behavior."
+                                { en: "Take a small amount of ghee in your palm.", mr: "थोडे तूप आपल्या तळहातावर घ्या." },
+                                { en: "Wait for it to melt.", mr: "ते वितळण्याची वाट पहा." }
                             ],
-                            expectedOutcome: "Pure ghee melts quickly at body temperature. If it takes time or doesn't melt, it may be adulterated with vegetable oils.",
+                            expectedOutcome: {
+                                en: "Pure ghee melts quickly at body temperature. Adulterated ghee takes time.",
+                                mr: "शुद्ध तूप शरीराच्या तापमानावर पटकन वितळते. भेसळयुक्त तूप वेळ घेते."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=ndoQtY19CFs"
                         }
                     ],
                     labTests: [
-                        { name: "Fatty acid profile", why: "Identifies oil mixing", approxCost: "$60-80" }
+                        { name: { en: "Fatty acid profile", mr: "फॅटी ऍसिड प्रोफाइल" }, why: { en: "Identifies oil mixing", mr: "तेलाची भेसळ ओळखते" }, approxCost: "$60-80" }
                     ],
                     questions: [
-                        { q: "Does it solidify completely when refrigerated?", type: "boolean", weight: 0.4, failIfTrue: false, ideal: true, reason: "Pure ghee solidifies uniformly. Vegetable oils may form separate layers." },
-                        { q: "Does it have a grainy texture when solid?", type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: "Good quality ghee often has a slightly grainy texture." }
+                        { q: { en: "Does it solidify completely when refrigerated?", mr: "ते फ्रीजमध्ये ठेवल्यावर पूर्णपणे घट्ट होते का?" }, type: "boolean", weight: 0.4, failIfTrue: false, ideal: true, reason: { en: "Pure ghee solidifies uniformly. Vegetable oils may form separate layers.", mr: "शुद्ध तूप एकसारखे घट्ट होते. वनस्पती तेल वेगळे थर बनवू शकतात." } },
+                        { q: { en: "Does it have a grainy texture when solid?", mr: "घट्ट असताना त्याला रवाळ पोत (texture) आहे का?" }, type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: { en: "Good quality ghee often has a slightly grainy texture.", mr: "चांगल्या प्रतीच्या तुपाला किंचित रवाळ पोत असतो." } }
                     ]
                 },
                 {
                     id: "olive-oil",
-                    name: "Olive Oil",
+                    name: { en: "Olive Oil", mr: "ऑलिव्ह तेल" },
                     image: "images/olive-oil.jpg",
-                    description: "Extra virgin olive oil - verify authenticity and detect cheaper oil mixing.",
+                    description: { en: "Extra virgin olive oil - verify authenticity and detect cheaper oil mixing.", mr: "एक्स्ट्रा व्हर्जिन ऑलिव्ह तेल - सत्यता तपासा आणि स्वस्त तेलाची भेसळ ओळखा." },
                     adulterations: [
-                        { name: "Cheaper oils", explanation: "Mixed with canola or sunflower oil", severity: "high" },
-                        { name: "Refined olive oil", explanation: "Sold as extra virgin", severity: "medium" },
-                        { name: "Artificial coloring", explanation: "To enhance appearance", severity: "high" }
+                        { name: { en: "Cheaper oils", mr: "स्वस्त तेल" }, explanation: { en: "Mixed with canola or sunflower oil", mr: "कॅनोला किंवा सूर्यफूल तेलात मिसळलेले" }, severity: "high" },
+                        { name: { en: "Refined olive oil", mr: "रिफाईंड ऑलिव्ह तेल" }, explanation: { en: "Sold as extra virgin", mr: "एक्स्ट्रा व्हर्जिन म्हणून विकले जाते" }, severity: "medium" },
+                        { name: { en: "Artificial coloring", mr: "कृत्रिम रंग" }, explanation: { en: "To enhance appearance", mr: "दिसण्यासाठी" }, severity: "high" }
                     ],
                     homeTests: [
                         {
                             id: "olive-fridge",
-                            title: "Refrigeration Test",
+                            title: { en: "Refrigeration Test", mr: "रेफ्रिजरेशन चाचणी" },
                             instructions: [
-                                "Place the oil bottle in the refrigerator for 24 hours.",
-                                "Observe solidification."
+                                { en: "Place the oil bottle in the refrigerator for 24 hours.", mr: "तेलाची बाटली २४ तास फ्रीजमध्ये ठेवा." },
+                                { en: "Observe solidification.", mr: "घट्टपणा तपासा." }
                             ],
-                            expectedOutcome: "Pure extra virgin olive oil (high in monounsaturated fats) will become thick, cloudy, and may solidify. Refined or mixed oils will often remain liquid.",
+                            expectedOutcome: {
+                                en: "Pure extra virgin olive oil (high in monounsaturated fats) will become thick, cloudy, and may solidify. Refined or mixed oils will often remain liquid.",
+                                mr: "शुद्ध एक्स्ट्रा व्हर्जिन ऑलिव्ह तेल घट्ट, ढगाळ होईल आणि गोठू शकते. रिफाईंड किंवा भेसळयुक्त तेल बऱ्याचदा द्रव राहील."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=EEKt0l3TnzY"
                         }
                     ],
                     labTests: [
-                        { name: "UV absorption test", why: "Confirms virgin grade", approxCost: "$70-90" }
+                        { name: { en: "UV absorption test", mr: "यूव्ही शोषण चाचणी" }, why: { en: "Confirms virgin grade", mr: "व्हर्जिन ग्रेडची पुष्टी करते" }, approxCost: "$70-90" }
                     ],
                     questions: [
-                        { q: "Does it have a peppery sensation in the back of your throat (when tasted raw)?", type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: "This 'pungency' is a key sign of high-quality, fresh extra virgin olive oil." },
-                        { q: "Does it solidify in the fridge?", type: "boolean", weight: 0.4, failIfTrue: false, ideal: true, reason: "Genuine EVOO should become cloudy and thick when cold." }
+                        { q: { en: "Does it have a peppery sensation in the back of your throat (when tasted raw)?", mr: "कच्चे चाखल्यावर घशात तिखट/झणझणीत संवेदना होते का?" }, type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: { en: "This 'pungency' is a key sign of high-quality, fresh extra virgin olive oil.", mr: "ही 'तिखटपणा' उच्च-गुणवत्तेच्या, ताज्या एक्स्ट्रा व्हर्जिन ऑलिव्ह तेलाचे मुख्य लक्षण आहे." } },
+                        { q: { en: "Does it solidify in the fridge?", mr: "ते फ्रीजमध्ये घट्ट होते का?" }, type: "boolean", weight: 0.4, failIfTrue: false, ideal: true, reason: { en: "Genuine EVOO should become cloudy and thick when cold.", mr: "खरे EVOO थंड झाल्यावर ढगाळ आणि घट्ट झाले पाहिजे." } }
                     ]
                 },
                 {
                     id: "spices",
-                    name: "Mixed Spices (Garam Masala)",
+                    name: { en: "Mixed Spices (Garam Masala)", mr: "मिक्स मसाले (गरम मसाला)" },
                     image: "images/spices.jpg",
-                    description: "Mixed spice powder - check for sawdust and artificial colors.",
+                    description: { en: "Mixed spice powder - check for sawdust and artificial colors.", mr: "मिक्स मसाला पावडर - लाकडी भुसा आणि कृत्रिम रंगांसाठी तपासा." },
                     adulterations: [
-                        { name: "Sawdust", explanation: "Used as filler", severity: "high" },
-                        { name: "Artificial colors", explanation: "To enhance appearance", severity: "critical" },
-                        { name: "Starch powder", explanation: "Cheap bulking agent", severity: "medium" }
+                        { name: { en: "Sawdust", mr: "लाकडी भुसा" }, explanation: { en: "Used as filler", mr: "फिलर म्हणून वापर" }, severity: "high" },
+                        { name: { en: "Artificial colors", mr: "कृत्रिम रंग" }, explanation: { en: "To enhance appearance", mr: "दिसण्यासाठी" }, severity: "critical" },
+                        { name: { en: "Starch powder", mr: "स्टार्च पावडर" }, explanation: { en: "Cheap bulking agent", mr: "स्वस्त वजन वाढवणारा एजंट" }, severity: "medium" }
                     ],
                     homeTests: [
                         {
                             id: "spice-float",
-                            title: "Float Test",
+                            title: { en: "Float Test", mr: "तरंगण्याची चाचणी" },
                             instructions: [
-                                "Sprinkle a pinch of spice powder on the surface of a glass of water.",
-                                "Observe what floats and what sinks."
+                                { en: "Sprinkle a pinch of spice powder on the surface of a glass of water.", mr: "चिमुटभर मसाला पावडर पाण्याच्या पृष्ठभागावर टाका." },
+                                { en: "Observe what floats and what sinks.", mr: "काय तरंगते आणि काय बुडते ते पहा." }
                             ],
-                            expectedOutcome: "Pure spices will either float or sink slowly. Adulterants like sawdust or brick powder will often sink immediately or float on the surface distinctly.",
+                            expectedOutcome: {
+                                en: "Pure spices will either float or sink slowly. Adulterants like sawdust will often float on the surface distinctly.",
+                                mr: "शुद्ध मसाले एकतर तरंगतील किंवा हळू बुडतील. लाकडी भुसा सारखी भेसळ स्पष्टपणे पृष्ठभागावर तरंगेल."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=blsROQcmpts"
                         }
                     ],
                     labTests: [
-                        { name: "Microscopic analysis", why: "Detects sawdust", approxCost: "$40-60" }
+                        { name: { en: "Microscopic analysis", mr: "सूक्ष्मदर्शी विश्लेषण" }, why: { en: "Detects sawdust", mr: "लाकडी भुसा शोधते" }, approxCost: "$40-60" }
                     ],
                     questions: [
-                        { q: "Does it have a strong, complex aroma?", type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: "Adulterated spices (with fillers) will have a weak or 'dusty' smell." },
-                        { q: "Is the color unnaturally bright or uniform?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "Natural spice mixes have slight color variations. A uniform, bright color can indicate dyes." }
+                        { q: { en: "Does it have a strong, complex aroma?", mr: "त्याला तीव्र, जटिल सुगंध आहे का?" }, type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: { en: "Adulterated spices (with fillers) will have a weak or 'dusty' smell.", mr: "भेसळयुक्त मसाल्यांना (फिलरसह) मंद किंवा 'धुळीसारखा' वास येईल." } },
+                        { q: { en: "Is the color unnaturally bright or uniform?", mr: "रंग अस्वाभाविकपणे तेजस्वी किंवा एकसमान आहे का?" }, type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: { en: "Natural spice mixes have slight color variations. A uniform, bright color can indicate dyes.", mr: "नैसर्गिक मसाल्यांच्या मिश्रणात रंगात थोडा फरक असतो. एकसमान, चमकदार रंग डाईज दर्शवू शकतो." } }
                     ]
                 },
                 {
                     id: "sugar",
-                    name: "Sugar",
+                    name: { en: "Sugar", mr: "साखर" },
                     image: "images/sugar.jpg",
-                    description: "White granulated sugar - detect chalk powder and non-sugar sweeteners.",
+                    description: { en: "White granulated sugar - detect chalk powder and non-sugar sweeteners.", mr: "पांढरी साखर - खडू पावडर आणि इतर भेसळ तपासा." },
                     adulterations: [
-                        { name: "Chalk powder", explanation: "Used as bulking agent", severity: "high" },
-                        { name: "Washing soda", explanation: "Used to add weight", severity: "high" },
-                        { name: "Sand", explanation: "Used to increase weight", severity: "critical" }
+                        { name: { en: "Chalk powder", mr: "खडू पावडर" }, explanation: { en: "Used as bulking agent", mr: "वजन वाढवण्यासाठी" }, severity: "high" },
+                        { name: { en: "Washing soda", mr: "वॉशिंग सोडा" }, explanation: { en: "Used to add weight", mr: "वजन वाढवण्यासाठी" }, severity: "high" },
+                        { name: { en: "Sand", mr: "वाळू" }, explanation: { en: "Used to increase weight", mr: "वजन वाढवण्यासाठी" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "sugar-dissolve",
-                            title: "Dissolution Test",
+                            title: { en: "Dissolution Test", mr: "विरघळण्याची चाचणी" },
                             instructions: [
-                                "Add a spoonful of sugar to a glass of water.",
-                                "Stir thoroughly.",
-                                "Check for residue at the bottom."
+                                { en: "Add a spoonful of sugar to a glass of water.", mr: "एक चमचा साखर एका ग्लास पाण्यात टाका." },
+                                { en: "Stir thoroughly.", mr: "व्यवस्थित ढवळा." },
+                                { en: "Check for residue at the bottom.", mr: "तळाशी काही अवशेष आहेत का ते तपासा." }
                             ],
-                            expectedOutcome: "Pure sugar dissolves completely, leaving clear water. Chalk powder, sand, or other insolubles will settle at the bottom.",
+                            expectedOutcome: {
+                                en: "Pure sugar dissolves completely. Chalk powder, sand, or other insolubles will settle at the bottom.",
+                                mr: "शुद्ध साखर पूर्णपणे विरघळते. खडू पावडर, वाळू, किंवा इतर न विरघळणारे पदार्थ तळाशी बसतील."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=vHGesmiKM8w"
                         }
                     ],
                     labTests: [
-                        { name: "Solubility test", why: "Detects insoluble adulterants", approxCost: "$20-30" }
+                        { name: { en: "Solubility test", mr: "विद्राव्यता चाचणी" }, why: { en: "Detects insoluble adulterants", mr: "न विरघळणारी भेसळ शोधते" }, approxCost: "$20-30" }
                     ],
                     questions: [
-                        { q: "Does it dissolve completely in water?", type: "boolean", weight: 0.7, failIfTrue: false, ideal: true, reason: "Any residue (chalk, sand) is a sign of adulteration." },
-                        { q: "Are the crystals uniform in size?", type: "boolean", weight: 0.3, failIfTrue: false, ideal: true, reason: "While not definitive, large variations can be a sign of mixing." }
+                        { q: { en: "Does it dissolve completely in water?", mr: "ते पाण्यात पूर्णपणे विरघळते का?" }, type: "boolean", weight: 0.7, failIfTrue: false, ideal: true, reason: { en: "Any residue (chalk, sand) is a sign of adulteration.", mr: "कोणताही अवशेष (खडू, वाळू) भेसळीचे लक्षण आहे." } },
+                        { q: { en: "Are the crystals uniform in size?", mr: "साखरेचे कण एकसमान आकाराचे आहेत का?" }, type: "boolean", weight: 0.3, failIfTrue: false, ideal: true, reason: { en: "While not definitive, large variations can be a sign of mixing.", mr: "हे निश्चित नसले तरी, मोठा फरक भेसळीचे लक्षण असू शकतो." } }
                     ]
                 },
                 {
                     id: "pulses",
-                    name: "Pulses (Lentils)",
+                    name: { en: "Pulses (Lentils)", mr: "डाळी" },
                     image: "images/pulses.jpg",
-                    description: "Various lentils and pulses - check for artificial coloring and stone particles.",
+                    description: { en: "Various lentils and pulses - check for artificial coloring and stone particles.", mr: "विविध डाळी - कृत्रिम रंग आणि खड्यांसाठी तपासा." },
                     adulterations: [
-                        { name: "Metanil yellow", explanation: "Toxic coloring agent", severity: "critical" },
-                        { name: "Stones/Gravel", explanation: "To increase weight", severity: "medium" },
-                        { name: "Khesari dal", explanation: "Cheaper, neurotoxic pulse mixed with others", severity: "critical" }
+                        { name: { en: "Metanil yellow", mr: "मेटानिल येलो" }, explanation: { en: "Toxic coloring agent", mr: "विषारी रंग" }, severity: "critical" },
+                        { name: { en: "Stones/Gravel", mr: "खडे/कचरा" }, explanation: { en: "To increase weight", mr: "वजन वाढवण्यासाठी" }, severity: "medium" },
+                        { name: { en: "Khesari dal", mr: "खेसारी डाळ" }, explanation: { en: "Cheaper, neurotoxic pulse mixed with others", mr: "स्वस्त, न्यूरोटॉक्सिक डाळ" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "pulse-soak",
-                            title: "Soaking Test",
+                            title: { en: "Soaking Test", mr: "भिजवण्याची चाचणी" },
                             instructions: [
-                                "Soak pulses in warm water for 30 minutes.",
-                                "Check the water color.",
-                                "Rub a few lentils with a wet paper towel."
+                                { en: "Soak pulses in warm water for 30 minutes.", mr: "डाळी कोमट पाण्यात ३० मिनिटे भिजवा." },
+                                { en: "Check the water color.", mr: "पाण्याचा रंग तपासा." },
+                                { en: "Rub a few lentils with a wet paper towel.", mr: "काही डाळी ओल्या पेपर टॉवेलने चोळा." }
                             ],
-                            expectedOutcome: "Artificially colored pulses will release color into the water or onto the paper towel. Pure pulses will not.",
+                            expectedOutcome: {
+                                en: "Artificially colored pulses will release color into the water or onto the paper towel. Pure pulses will not.",
+                                mr: "कृत्रिम रंग दिलेल्या डाळी पाण्यात किंवा पेपर टॉवेलवर रंग सोडतील. शुद्ध डाळी सोडणार नाहीत."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=hOFopNec34A"
                         }
                     ],
                     labTests: [
-                        { name: "Color leaching test", why: "Detects artificial colors", approxCost: "$30-40" },
-                        { name: "Khesari dal detection", why: "Identifies neurotoxic pulse", approxCost: "$40-50" }
+                        { name: { en: "Color leaching test", mr: "रंग गळती चाचणी" }, why: { en: "Detects artificial colors", mr: "कृत्रिम रंग शोधते" }, approxCost: "$30-40" },
+                        { name: { en: "Khesari dal detection", mr: "खेसारी डाळ ओळख" }, why: { en: "Identifies neurotoxic pulse", mr: "न्यूरोटॉक्सिक डाळ ओळखते" }, approxCost: "$40-50" }
                     ],
                     questions: [
-                        { q: "Do they have an unnaturally bright, uniform color?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "This is a strong indicator of artificial dyes like Metanil yellow." },
-                        { q: "Do you find small stones or dirt when sorting?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "This is a common, low-tech adulteration to add weight." }
+                        { q: { en: "Do they have an unnaturally bright, uniform color?", mr: "त्यांचा रंग अस्वाभाविकपणे तेजस्वी, एकसमान आहे का?" }, type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: { en: "This is a strong indicator of artificial dyes.", mr: "हे कृत्रिम रंगांचे एक मजबूत सूचक आहे." } },
+                        { q: { en: "Do you find small stones or dirt when sorting?", mr: "निवडताना लहान खडे किंवा कचरा आढळतो का?" }, type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: { en: "This is a common, low-tech adulteration to add weight.", mr: "वजन वाढवण्यासाठी ही एक सामान्य, सोपी भेसळ आहे." } }
                     ]
                 },
                 {
                     id: "coffee-powder",
-                    name: "Coffee Powder",
+                    name: { en: "Coffee Powder", mr: "कॉफी पावडर" },
                     image: "images/coffee-powder.jpg",
-                    description: "Ground coffee, often adulterated with chicory, tamarind seeds, or date seeds.",
+                    description: { en: "Ground coffee, often adulterated with chicory, tamarind seeds, or date seeds.", mr: "कॉफी पावडर, अनेकदा चिकोरी, चिंचेच्या बिया किंवा खजुराच्या बियांनी भेसळलेली." },
                     adulterations: [
-                        { name: "Chicory powder", explanation: "Cheaper filler, adds bitterness", severity: "medium" },
-                        { name: "Tamarind seed powder", explanation: "Adds bulk and color", severity: "high" },
-                        { name: "Date seed powder", explanation: "Used as a filler", severity: "high" }
+                        { name: { en: "Chicory powder", mr: "चिकोरी पावडर" }, explanation: { en: "Cheaper filler, adds bitterness", mr: "स्वस्त फिलर, कडूपणा वाढवते" }, severity: "medium" },
+                        { name: { en: "Tamarind seed powder", mr: "चिंचेच्या बियांची पावडर" }, explanation: { en: "Adds bulk and color", mr: "वजन आणि रंग वाढवते" }, severity: "high" },
+                        { name: { en: "Date seed powder", mr: "खजुराच्या बियांची पावडर" }, explanation: { en: "Used as a filler", mr: "फिलर म्हणून वापर" }, severity: "high" }
                     ],
                     homeTests: [
                         {
                             id: "coffee-float",
-                            title: "Float Test",
+                            title: { en: "Float Test", mr: "तरंगण्याची चाचणी" },
                             instructions: [
-                                "Gently sprinkle coffee powder on the surface of a glass of water.",
-                                "Observe for 2-3 minutes."
+                                { en: "Gently sprinkle coffee powder on the surface of a glass of water.", mr: "कॉफी पावडर हळूवारपणे पाण्याच्या पृष्ठभागावर टाका." },
+                                { en: "Observe for 2-3 minutes.", mr: "२-३ मिनिटे निरीक्षण करा." }
                             ],
-                            expectedOutcome: "Pure coffee powder floats. Adulterants like chicory or tamarind seed powder are denser and will start sinking, leaving a colored trail.",
+                            expectedOutcome: {
+                                en: "Pure coffee powder floats. Adulterants like chicory will start sinking, leaving a colored trail.",
+                                mr: "शुद्ध कॉफी पावडर तरंगते. चिकोरीसारखी भेसळ बुडायला लागते आणि रंगीत माग सोडते."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=sYbDsnT5WvY"
                         }
                     ],
                     labTests: [
-                        { name: "Microscopic analysis", why: "Identifies chicory and tamarind cell structures", approxCost: "$30-40" }
+                        { name: { en: "Microscopic analysis", mr: "सूक्ष्मदर्शी विश्लेषण" }, why: { en: "Identifies chicory and tamarind cell structures", mr: "चिकोरी आणि चिंचेच्या पेशींची रचना ओळखते" }, approxCost: "$30-40" }
                     ],
                     questions: [
-                        { q: "Does most of the powder sink immediately?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "Pure coffee is less dense and should float." },
-                        { q: "Does the water turn brownish quickly, even without stirring?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "Chicory releases color in cold water much faster than coffee." }
+                        { q: { en: "Does most of the powder sink immediately?", mr: "जास्त पावडर लगेच बुडते का?" }, type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: { en: "Pure coffee is less dense and should float.", mr: "शुद्ध कॉफी कमी घनतेची असते आणि तरंगली पाहिजे." } },
+                        { q: { en: "Does the water turn brownish quickly, even without stirring?", mr: "न ढवळताही पाणी पटकन तपकिरी होते का?" }, type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: { en: "Chicory releases color in cold water much faster than coffee.", mr: "कॉफीपेक्षा चिकोरी थंड पाण्यात खूप वेगाने रंग सोडते." } }
                     ]
                 },
                 {
                     id: "chilli-powder",
-                    name: "Red Chilli Powder",
+                    name: { en: "Red Chilli Powder", mr: "लाल तिखट" },
                     image: "images/chilli-powder.jpg",
-                    description: "Ground red chilli, often mixed with brick powder, artificial colors, or sawdust.",
+                    description: { en: "Ground red chilli, often mixed with brick powder, artificial colors, or sawdust.", mr: "लाल तिखट, अनेकदा विट पावडर, कृत्रिम रंग किंवा लाकडी भुसा मिसळलेला असतो." },
                     adulterations: [
-                        { name: "Brick powder", explanation: "Adds bulk and color, causes digestive issues", severity: "critical" },
-                        { name: "Artificial colors (Sudan dyes)", explanation: "Carcinogenic dyes added for color", severity: "critical" },
-                        { name: "Sawdust", explanation: "Used as filler", severity: "high" }
+                        { name: { en: "Brick powder", mr: "विट पावडर" }, explanation: { en: "Adds bulk and color, causes digestive issues", mr: "वजन आणि रंग वाढवते, पचनाच्या समस्या" }, severity: "critical" },
+                        { name: { en: "Artificial colors (Sudan dyes)", mr: "कृत्रिम रंग (सुदान डाईज)" }, explanation: { en: "Carcinogenic dyes added for color", mr: "रंगासाठी कर्करोगजन्य रंग" }, severity: "critical" },
+                        { name: { en: "Sawdust", mr: "लाकडी भुसा" }, explanation: { en: "Used as filler", mr: "फिलर म्हणून वापर" }, severity: "high" }
                     ],
                     homeTests: [
                         {
                             id: "chilli-water",
-                            title: "Water Test",
+                            title: { en: "Water Test", mr: "पाण्याची चाचणी" },
                             instructions: [
-                                "Add a spoonful of chilli powder to a glass of water.",
-                                "Let it sit for 5 minutes."
+                                { en: "Add a spoonful of chilli powder to a glass of water.", mr: "एक चमचा तिखट एका ग्लास पाण्यात टाका." },
+                                { en: "Let it sit for 5 minutes.", mr: "५ मिनिटे स्थिर होऊ द्या." }
                             ],
-                            expectedOutcome: "Pure chilli powder will not dissolve much and will settle slowly. Brick powder will sink quickly. Artificial colors will streak the water red.",
+                            expectedOutcome: {
+                                en: "Pure chilli powder will not dissolve much and will settle slowly. Brick powder will sink quickly. Artificial colors will streak the water red.",
+                                mr: "शुद्ध तिखट जास्त विरघळणार नाही आणि हळू खाली बसेल. विट पावडर पटकन बुडेल. कृत्रिम रंग पाण्यात लाल रेषा सोडतील."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=Ews2NNFV7GQ"
                         }
                     ],
                     labTests: [
-                        { name: "Chromatography for Sudan Dyes", why: "Detects banned carcinogenic colors", approxCost: "$60-80" },
-                        { name: "Ash content analysis", why: "High ash content suggests brick powder or sand", approxCost: "$30-40" }
+                        { name: { en: "Chromatography for Sudan Dyes", mr: "सुदान डाईजसाठी क्रोमॅटोग्राफी" }, why: { en: "Detects banned carcinogenic colors", mr: "प्रतिबंधित कर्करोगजन्य रंग शोधते" }, approxCost: "$60-80" },
+                        { name: { en: "Ash content analysis", mr: "राख सामग्री विश्लेषण" }, why: { en: "High ash content suggests brick powder or sand", mr: "जास्त राख विट पावडर किंवा वाळू दर्शवते" }, approxCost: "$30-40" }
                     ],
                     questions: [
-                        { q: "Is the powder gritty when rubbed between fingers?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "Grit can indicate sand or brick powder." },
-                        { q: "Does it leave a bright red color on a wet paper towel?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "Natural chilli powder stains, but an immediate, bright dye-like color suggests artificial colors." }
+                        { q: { en: "Is the powder gritty when rubbed between fingers?", mr: "बोटांमध्ये चोळल्यावर पावडर खरखरीत लागते का?" }, type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: { en: "Grit can indicate sand or brick powder.", mr: "खरखरीतपणा वाळू किंवा विट पावडर दर्शवू शकतो." } },
+                        { q: { en: "Does it leave a bright red color on a wet paper towel?", mr: "ओल्या पेपर टॉवेलवर ते चमकदार लाल रंग सोडते का?" }, type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: { en: "Natural chilli powder stains, but an immediate, bright dye-like color suggests artificial colors.", mr: "नैसर्गिक तिखट डाग सोडते, परंतु लगेच, चमकदार रंग कृत्रिम रंग दर्शवतो." } }
                     ]
                 },
                 {
                     id: "black-pepper",
-                    name: "Black Pepper (Whole)",
+                    name: { en: "Black Pepper (Whole)", mr: "काळी मिरी" },
                     image: "images/black-pepper.jpg",
-                    description: "Whole peppercorns, sometimes mixed with papaya seeds or mineral oil.",
+                    description: { en: "Whole peppercorns, sometimes mixed with papaya seeds or mineral oil.", mr: "काळी मिरी, कधीकधी पपईच्या बिया किंवा मिनरल ऑइलने भेसळ." },
                     adulterations: [
-                        { name: "Papaya seeds", explanation: "Similar appearance, cheaper substitute", severity: "high" },
-                        { name: "Mineral oil coating", explanation: "Added for a shiny appearance", severity: "medium" }
+                        { name: { en: "Papaya seeds", mr: "पपईच्या बिया" }, explanation: { en: "Similar appearance, cheaper substitute", mr: "सारखे दिसतात, स्वस्त पर्याय" }, severity: "high" },
+                        { name: { en: "Mineral oil coating", mr: "मिनरल ऑइल कोटिंग" }, explanation: { en: "Added for a shiny appearance", mr: "चमकदार दिसण्यासाठी" }, severity: "medium" }
                     ],
                     homeTests: [
                         {
                             id: "pepper-float",
-                            title: "Water Float Test",
+                            title: { en: "Water Float Test", mr: "पाण्यात तरंगण्याची चाचणी" },
                             instructions: [
-                                "Put a small handful of peppercorns into a glass of water."
+                                { en: "Put a small handful of peppercorns into a glass of water.", mr: "मूठभर मिरी एका ग्लास पाण्यात टाका." }
                             ],
-                            expectedOutcome: "Pure, heavy black peppercorns will sink. Lighter peppercorns and papaya seeds will float.",
+                            expectedOutcome: {
+                                en: "Pure, heavy black peppercorns will sink. Lighter peppercorns and papaya seeds will float.",
+                                mr: "शुद्ध, जड काळी मिरी बुडेल. हलकी मिरी आणि पपईच्या बिया तरंगतील."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=IhJXfLGDIRs"
                         }
                     ],
                     labTests: [
-                        { name: "Microscopic analysis", why: "Distinguishes papaya seed structure", approxCost: "$30-40" }
+                        { name: { en: "Microscopic analysis", mr: "सूक्ष्मदर्शी विश्लेषण" }, why: { en: "Distinguishes papaya seed structure", mr: "पपईच्या बियांची रचना ओळखते" }, approxCost: "$30-40" }
                     ],
                     questions: [
-                        { q: "Do many of the 'peppercorns' float in water?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "Papaya seeds and hollow peppercorns float, good peppercorns sink." },
-                        { q: "Do the seeds look overly shiny or have a kerosine-like smell?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "This indicates a mineral oil coating." }
+                        { q: { en: "Do many of the 'peppercorns' float in water?", mr: "बर्‍याच मिऱ्या पाण्यात तरंगतात का?" }, type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: { en: "Papaya seeds and hollow peppercorns float, good peppercorns sink.", mr: "पपईच्या बिया आणि पोकळ मिरी तरंगतात, चांगल्या मिऱ्या बुडतात." } },
+                        { q: { en: "Do the seeds look overly shiny or have a kerosine-like smell?", mr: "बिया जास्त चमकदार दिसतात किंवा केरोसीनसारखा वास येतो का?" }, type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: { en: "This indicates a mineral oil coating.", mr: "हे मिनरल ऑइल कोटिंग दर्शवते." } }
                     ]
                 },
                 {
                     id: "tea-leaves",
-                    name: "Tea Leaves",
+                    name: { en: "Tea Leaves", mr: "चहा पाने" },
                     image: "images/tea-leaves.jpg",
-                    description: "Dried tea leaves, which can be mixed with used tea leaves or artificial colors.",
+                    description: { en: "Dried tea leaves, which can be mixed with used tea leaves or artificial colors.", mr: "सुकी चहा पाने, ज्यात वापरलेली पाने किंवा कृत्रिम रंग मिसळले जाऊ शकतात." },
                     adulterations: [
-                        { name: "Used tea leaves", explanation: "Exhausted leaves, dried and re-added", severity: "high" },
-                        { name: "Artificial colors", explanation: "To color the used leaves", severity: "critical" },
-                        { name: "Sawdust", explanation: "Used as filler", severity: "high" }
+                        { name: { en: "Used tea leaves", mr: "वापरलेली चहा पाने" }, explanation: { en: "Exhausted leaves, dried and re-added", mr: "वापरलेली पाने, सुकवून पुन्हा मिसळली" }, severity: "high" },
+                        { name: { en: "Artificial colors", mr: "कृत्रिम रंग" }, explanation: { en: "To color the used leaves", mr: "वापरलेल्या पानांना रंग देण्यासाठी" }, severity: "critical" },
+                        { name: { en: "Sawdust", mr: "लाकडी भुसा" }, explanation: { en: "Used as filler", mr: "फिलर म्हणून वापर" }, severity: "high" }
                     ],
                     homeTests: [
                         {
                             id: "tea-paper",
-                            title: "Cold Water & Paper Test",
+                            title: { en: "Cold Water & Paper Test", mr: "थंड पाणी आणि पेपर चाचणी" },
                             instructions: [
-                                "Sprinkle tea leaves on a wet white paper towel.",
-                                "Alternatively, add tea leaves to a glass of cold water.",
-                                "Observe for color."
+                                { en: "Sprinkle tea leaves on a wet white paper towel.", mr: "ओल्या पांढऱ्या पेपर टॉवेलवर चहाची पाने टाका." },
+                                { en: "Alternatively, add tea leaves to a glass of cold water.", mr: "किंवा, एका ग्लास थंड पाण्यात चहाची पाने टाका." },
+                                { en: "Observe for color.", mr: "रंग तपासा." }
                             ],
-                            expectedOutcome: "Pure tea leaves will not release color on the wet paper or in cold water. Artificially colored leaves will immediately stain the paper or the cold water.",
+                            expectedOutcome: {
+                                en: "Pure tea leaves will not release color on the wet paper or in cold water. Artificially colored leaves will immediately stain the paper or the cold water.",
+                                mr: "शुद्ध चहाची पाने ओल्या पेपरवर किंवा थंड पाण्यात रंग सोडणार नाहीत. कृत्रिम रंग असलेली पाने लगेच पेपरला किंवा थंड पाण्याला डाग देतील."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=GuAFkFd2e24"
                         }
                     ],
                     labTests: [
-                        { name: "Color leaching test", why: "Detects artificial colors", approxCost: "$30-40" }
+                        { name: { en: "Color leaching test", mr: "रंग गळती चाचणी" }, why: { en: "Detects artificial colors", mr: "कृत्रिम रंग शोधते" }, approxCost: "$30-40" }
                     ],
                     questions: [
-                        { q: "Does it release color in cold water?", type: "boolean", weight: 0.7, failIfTrue: true, ideal: false, reason: "This is a definite sign of artificial dyes." },
-                        { q: "Do the leaves look unnaturally black or shiny?", type: "boolean", weight: 0.3, failIfTrue: true, ideal: false, reason: "Can indicate graphite or other polishing agents." }
+                        { q: { en: "Does it release color in cold water?", mr: "ते थंड पाण्यात रंग सोडते का?" }, type: "boolean", weight: 0.7, failIfTrue: true, ideal: false, reason: { en: "This is a definite sign of artificial dyes.", mr: "हे कृत्रिम रंगांचे निश्चित चिन्ह आहे." } },
+                        { q: { en: "Do the leaves look unnaturally black or shiny?", mr: "पाने अस्वाभाविकपणे काळी किंवा चमकदार दिसतात का?" }, type: "boolean", weight: 0.3, failIfTrue: true, ideal: false, reason: { en: "Can indicate graphite or other polishing agents.", mr: "हे ग्राफाइट किंवा इतर पॉलिशिंग एजंट दर्शवू शकते." } }
                     ]
                 },
                 {
                     id: "apples",
-                    name: "Apples (Wax Coating)",
+                    name: { en: "Apples (Wax Coating)", mr: "सफरचंद (वॅक्स कोटिंग)" },
                     image: "images/apples.jpg",
-                    description: "Fresh apples, often coated with wax to improve shelf life and appearance.",
+                    description: { en: "Fresh apples, often coated with wax to improve shelf life and appearance.", mr: "ताजी सफरचंद, अनेकदा शेल्फ लाइफ आणि दिसण्यासाठी वॅक्सने लेपलेली." },
                     adulterations: [
-                        { name: "Petroleum-based wax", explanation: "Non-edible wax used instead of natural shellac", severity: "high" },
-                        { name: "Morpholine", explanation: "Solvent used in wax, can be toxic", severity: "critical" }
+                        { name: { en: "Petroleum-based wax", mr: "पेट्रोलियम-आधारित वॅक्स" }, explanation: { en: "Non-edible wax used instead of natural shellac", mr: "नैसर्गिक शेलॅक ऐवजी अखाद्य वॅक्सचा वापर" }, severity: "high" },
+                        { name: { en: "Morpholine", mr: "मॉर्फोलिन" }, explanation: { en: "Solvent used in wax, can be toxic", mr: "वॅक्समध्ये वापरले जाणारे सॉल्व्हेंट, विषारी असू शकते" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "apple-scratch",
-                            title: "Blade Scratch Test",
+                            title: { en: "Blade Scratch Test", mr: "ब्लेड स्क्रॅच चाचणी" },
                             instructions: [
-                                "Take a sharp knife or blade.",
-                                "Gently scratch the surface of the apple.",
-                                "Observe what comes off."
+                                { en: "Take a sharp knife or blade.", mr: "एक धारदार चाकू किंवा ब्लेड घ्या." },
+                                { en: "Gently scratch the surface of the apple.", mr: "सफरचंदाच्या पृष्ठभागावर हळूवारपणे खरवडा." },
+                                { en: "Observe what comes off.", mr: "काय निघते ते पहा." }
                             ],
-                            expectedOutcome: "A natural wax coating is very thin. If a thick, waxy, white substance flakes off, it is likely an artificial petroleum-based wax coating.",
+                            expectedOutcome: {
+                                en: "A natural wax coating is very thin. If a thick, waxy, white substance flakes off, it is likely an artificial petroleum-based wax coating.",
+                                mr: "नैसर्गिक वॅक्सचा थर खूप पातळ असतो. जर जाड, मेणासारखा पांढरा पदार्थ निघत असेल, तर ते कृत्रिम पेट्रोलियम-आधारित वॅक्स कोटिंग असण्याची शक्यता आहे."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=c7-5Ebiojsk"
                         }
                     ],
                     labTests: [
-                        { name: "Wax composition analysis", why: "Identifies non-edible petroleum waxes", approxCost: "$50-70" }
+                        { name: { en: "Wax composition analysis", mr: "वॅक्स रचना विश्लेषण" }, why: { en: "Identifies non-edible petroleum waxes", mr: "अखाद्य पेट्रोलियम वॅक्स ओळखते" }, approxCost: "$50-70" }
                     ],
                     questions: [
-                        { q: "Is the apple unnaturally shiny, almost like plastic?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "A sign of a heavy, artificial wax coat." },
-                        { q: "Does a white, waxy powder flake off when scratched?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "This confirms an artificial wax coating." }
+                        { q: { en: "Is the apple unnaturally shiny, almost like plastic?", mr: "सफरचंद अस्वाभाविकपणे चमकदार, प्लास्टिकसारखे दिसते का?" }, type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: { en: "A sign of a heavy, artificial wax coat.", mr: "जाड, कृत्रिम वॅक्सच्या थराचे चिन्ह." } },
+                        { q: { en: "Does a white, waxy powder flake off when scratched?", mr: "खरवडल्यावर पांढरी, मेणासारखी पावडर निघते का?" }, type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: { en: "This confirms an artificial wax coating.", mr: "हे कृत्रिम वॅक्स कोटिंगची पुष्टी करते." } }
                     ]
                 },
                 {
                     id: "green-peas",
-                    name: "Green Peas",
+                    name: { en: "Green Peas", mr: "हिरवे वाटाणे" },
                     image: "images/green-peas.jpg",
-                    description: "Fresh or frozen green peas, sometimes dyed to look fresher.",
+                    description: { en: "Fresh or frozen green peas, sometimes dyed to look fresher.", mr: "ताजे किंवा गोठलेले हिरवे वाटाणे, कधीकधी ताजे दिसण्यासाठी रंगवलेले." },
                     adulterations: [
-                        { name: "Malachite green", explanation: "A toxic, carcinogenic dye used to enhance color", severity: "critical" }
+                        { name: { en: "Malachite green", mr: "मॅलाकाइट ग्रीन" }, explanation: { en: "A toxic, carcinogenic dye used to enhance color", mr: "रंग वाढवण्यासाठी वापरला जाणारा विषारी, कर्करोगजन्य रंग" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "peas-soak",
-                            title: "Soaking Test",
+                            title: { en: "Soaking Test", mr: "भिजवण्याची चाचणी" },
                             instructions: [
-                                "Put a handful of peas in a glass of water.",
-                                "Stir and let sit for 30 minutes.",
-                                "Observe the water."
+                                { en: "Put a handful of peas in a glass of water.", mr: "मूठभर वाटाणे एका ग्लास पाण्यात टाका." },
+                                { en: "Stir and let sit for 30 minutes.", mr: "ढवळा आणि ३० मिनिटे राहू द्या." },
+                                { en: "Observe the water.", mr: "पाण्याचे निरीक्षण करा." }
                             ],
-                            expectedOutcome: "Pure peas will not color the water. If the water turns green, it indicates the presence of artificial dye like Malachite Green.",
+                            expectedOutcome: {
+                                en: "Pure peas will not color the water. If the water turns green, it indicates the presence of artificial dye like Malachite Green.",
+                                mr: "शुद्ध वाटाणे पाण्याला रंग देणार नाहीत. जर पाणी हिरवे झाले, तर ते मॅलाकाइट ग्रीनसारख्या कृत्रिम रंगाची उपस्थिती दर्शवते."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=g-g8aXIoZfE"
                         }
                     ],
                     labTests: [
-                        { name: "Chromatography for Dyes", why: "Detects Malachite Green", approxCost: "$60-80" }
+                        { name: { en: "Chromatography for Dyes", mr: "रंगांसाठी क्रोमॅटोग्राफी" }, why: { en: "Detects Malachite Green", mr: "मॅलाकाइट ग्रीन शोधते" }, approxCost: "$60-80" }
                     ],
                     questions: [
-                        { q: "Does the water turn green after soaking the peas?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "This is a direct sign of toxic artificial dyes." }
+                        { q: { en: "Does the water turn green after soaking the peas?", mr: "वाटाणे भिजवल्यानंतर पाणी हिरवे होते का?" }, type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: { en: "This is a direct sign of toxic artificial dyes.", mr: "हे विषारी कृत्रिम रंगांचे थेट लक्षण आहे." } }
                     ]
                 },
                 {
                     id: "coriander-powder",
-                    name: "Coriander Powder",
+                    name: { en: "Coriander Powder", mr: "धणे पावडर" },
                     image: "images/coriander-powder.jpg",
-                    description: "Ground coriander, often adulterated with sawdust, dung powder, or starch.",
+                    description: { en: "Ground coriander, often adulterated with sawdust, dung powder, or starch.", mr: "धणे पावडर, अनेकदा लाकडी भुसा, शेणाची पावडर किंवा स्टार्चने भेसळलेली." },
                     adulterations: [
-                        { name: "Sawdust", explanation: "Used as filler", severity: "high" },
-                        { name: "Dung powder", explanation: "Dried and powdered horse dung as filler", severity: "critical" },
-                        { name: "Starch", explanation: "Used as a bulking agent", severity: "medium" }
+                        { name: { en: "Sawdust", mr: "लाकडी भुसा" }, explanation: { en: "Used as filler", mr: "फिलर म्हणून वापर" }, severity: "high" },
+                        { name: { en: "Dung powder", mr: "शेणाची पावडर" }, explanation: { en: "Dried and powdered horse dung as filler", mr: "फिलर म्हणून घोड्याच्या लिदीची पावडर" }, severity: "critical" },
+                        { name: { en: "Starch", mr: "स्टार्च" }, explanation: { en: "Used as a bulking agent", mr: "वजन वाढवण्यासाठी" }, severity: "medium" }
                     ],
                     homeTests: [
                         {
                             id: "coriander-float",
-                            title: "Water Float Test",
+                            title: { en: "Water Float Test", mr: "पाण्यात तरंगण्याची चाचणी" },
                             instructions: [
-                                "Sprinkle a pinch of coriander powder on the surface of water.",
-                                "Observe."
+                                { en: "Sprinkle a pinch of coriander powder on the surface of water.", mr: "चिमुटभर धणे पावडर पाण्याच्या पृष्ठभागावर टाका." },
+                                { en: "Observe.", mr: "निरीक्षण करा." }
                             ],
-                            expectedOutcome: "Pure coriander powder will mostly float or sink very slowly. Adulterants like sawdust or dung powder will float, while heavier particles sink.",
+                            expectedOutcome: {
+                                en: "Pure coriander powder will mostly float or sink very slowly. Adulterants like sawdust or dung powder will float.",
+                                mr: "शुद्ध धणे पावडर मुख्यतः तरंगेल किंवा खूप हळू बुडेल. लाकडी भुसा किंवा शेणाची पावडरसारखी भेसळ तरंगेल."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=R-3jHiikb3Q"
                         }
                     ],
                     labTests: [
-                        { name: "Microscopic analysis", why: "Identifies sawdust and other foreign matter", approxCost: "$40-50" }
+                        { name: { en: "Microscopic analysis", mr: "सूक्ष्मदर्शी विश्लेषण" }, why: { en: "Identifies sawdust and other foreign matter", mr: "लाकडी भुसा आणि इतर परदेशी वस्तू ओळखते" }, approxCost: "$40-50" }
                     ],
                     questions: [
-                        { q: "Does it have a weak or 'musty' smell instead of a fresh, citrusy aroma?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "Fillers dilute the natural aroma." },
-                        { q: "Does it form a pasty, starchy texture when mixed with water?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "Indicates adulteration with starch." }
+                        { q: { en: "Does it have a weak or 'musty' smell instead of a fresh, citrusy aroma?", mr: "ताज्या, लिंबासारख्या सुगंधाऐवजी मंद किंवा 'कुबट' वास येतो का?" }, type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: { en: "Fillers dilute the natural aroma.", mr: "फिलर नैसर्गिक सुगंध कमी करतात." } },
+                        { q: { en: "Does it form a pasty, starchy texture when mixed with water?", mr: "पाण्यात मिसळल्यावर पेस्टसारखा, स्टार्चयुक्त पोत तयार होतो का?" }, type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: { en: "Indicates adulteration with starch.", mr: "स्टार्चची भेसळ दर्शवते." } }
                     ]
                 },
                 {
                     id: "saffron",
-                    name: "Saffron",
+                    name: { en: "Saffron", mr: "केशर" },
                     image: "images/saffron.jpg",
-                    description: "Saffron strands (stigmas), often faked with dyed corn silk or other plant fibers.",
+                    description: { en: "Saffron strands (stigmas), often faked with dyed corn silk or other plant fibers.", mr: "केशराच्या काड्या, अनेकदा रंगवलेल्या कॉर्न सिल्क (कणीस) किंवा इतर वनस्पती तंतूंनी भेसळ." },
                     adulterations: [
-                        { name: "Dyed corn silk", explanation: "Cheaper material dyed to look like saffron", severity: "high" },
-                        { name: "Safflower strands", explanation: "A different, cheaper plant", severity: "medium" },
-                        { name: "Artificial color", explanation: "To enhance color", severity: "critical" }
+                        { name: { en: "Dyed corn silk", mr: "रंगवलेले कॉर्न सिल्क (कणीस)" }, explanation: { en: "Cheaper material dyed to look like saffron", mr: "केशरासारखे दिसण्यासाठी रंगवलेला स्वस्त पदार्थ" }, severity: "high" },
+                        { name: { en: "Safflower strands", mr: "सॅफ्लॉवर (करडई)" }, explanation: { en: "A different, cheaper plant", mr: "एक वेगळी, स्वस्त वनस्पती" }, severity: "medium" },
+                        { name: { en: "Artificial color", mr: "कृत्रिम रंग" }, explanation: { en: "To enhance color", mr: "रंग वाढवण्यासाठी" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "saffron-soak",
-                            title: "Cold Water Test",
+                            title: { en: "Cold Water Test", mr: "थंड पाण्याची चाचणी" },
                             instructions: [
-                                "Place a few strands of saffron in a glass of cold water.",
-                                "Observe the color release."
+                                { en: "Place a few strands of saffron in a glass of cold water.", mr: "केशराच्या काही काड्या थंड पाण्याच्या ग्लासमध्ये टाका." },
+                                { en: "Observe the color release.", mr: "रंग कसा सुटतो ते पहा." }
                             ],
-                            expectedOutcome: "Pure saffron releases its yellow-orange color slowly and the strand itself will not lose its color. Fake saffron (dyed) will release color immediately and the strand will become pale.",
+                            expectedOutcome: {
+                                en: "Pure saffron releases its yellow-orange color slowly and the strand itself will not lose its color. Fake saffron (dyed) will release color immediately.",
+                                mr: "शुद्ध केशर आपला पिवळा-केशरी रंग हळूवारपणे सोडते आणि काडीचा रंग जात नाही. बनावट केशर (रंगवलेले) लगेच रंग सोडेल."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=OqiQK-4edgM"
                         }
                     ],
                     labTests: [
-                        { name: "Spectrophotometry (Crocin level)", why: "Measures the actual color intensity/purity", approxCost: "$80-100" }
+                        { name: { en: "Spectrophotometry (Crocin level)", mr: "स्पेक्ट्रोफोटोमेट्री (क्रोसिन पातळी)" }, why: { en: "Measures the actual color intensity/purity", mr: "वास्तविक रंगाची तीव्रता/शुद्धता मोजते" }, approxCost: "$80-100" }
                     ],
                     questions: [
-                        { q: "Does it release a strong red color immediately in cold water?", type: "boolean", weight: 0.7, failIfTrue: true, ideal: false, reason: "This is a sign of artificial dye." },
-                        { q: "Does the strand itself lose its color and turn pale?", type: "boolean", weight: 0.3, failIfTrue: true, ideal: false, reason: "Fake saffron (like corn silk) is just a dyed fiber." }
+                        { q: { en: "Does it release a strong red color immediately in cold water?", mr: "ते थंड पाण्यात लगेच गडद लाल रंग सोडते का?" }, type: "boolean", weight: 0.7, failIfTrue: true, ideal: false, reason: { en: "This is a sign of artificial dye.", mr: "हे कृत्रिम रंगाचे लक्षण आहे." } },
+                        { q: { en: "Does the strand itself lose its color and turn pale?", mr: "काडीचा रंग जाऊन ती फिकट होते का?" }, type: "boolean", weight: 0.3, failIfTrue: true, ideal: false, reason: { en: "Fake saffron (like corn silk) is just a dyed fiber.", mr: "बनावट केशर (कॉर्न सिल्कसारखे) फक्त एक रंगवलेला तंतू असतो." } }
                     ]
                 },
                 {
                     id: "ice-cream",
-                    name: "Ice Cream",
+                    name: { en: "Ice Cream", mr: "आईस्क्रीम" },
                     image: "images/ice-cream.jpg",
-                    description: "Frozen dairy dessert, sometimes adulterated with washing powder.",
+                    description: { en: "Frozen dairy dessert, sometimes adulterated with washing powder.", mr: "गोठवलेला डेझर्ट, कधीकधी वॉशिंग पावडरने भेसळलेला." },
                     adulterations: [
-                        { name: "Washing powder (Detergent)", explanation: "Added to increase foam and volume", severity: "critical" }
+                        { name: { en: "Washing powder (Detergent)", mr: "वॉशिंग पावडर (डिटर्जंट)" }, explanation: { en: "Added to increase foam and volume", mr: "फेस आणि आकार वाढवण्यासाठी" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "ice-cream-lemon",
-                            title: "Lemon Juice Test",
+                            title: { en: "Lemon Juice Test", mr: "लिंबाच्या रसाची चाचणी" },
                             instructions: [
-                                "Let a small amount of ice cream melt.",
-                                "Add a few drops of lemon juice to the melted liquid.",
-                                "Observe for foaming or bubbles."
+                                { en: "Let a small amount of ice cream melt.", mr: "थोडे आईस्क्रीम वितळू द्या." },
+                                { en: "Add a few drops of lemon juice to the melted liquid.", mr: "वितळलेल्या द्रव्यात लिंबाच्या रसाचे काही थेंब टाका." },
+                                { en: "Observe for foaming or bubbles.", mr: "फेस किंवा बुडबुडे येतात का ते पहा." }
                             ],
-                            expectedOutcome: "If the mixture froths or bubbles, it indicates the presence of washing powder (which is alkaline). Pure ice cream will simply curdle.",
+                            expectedOutcome: {
+                                en: "If the mixture froths or bubbles, it indicates the presence of washing powder. Pure ice cream will simply curdle.",
+                                mr: "जर मिश्रणाला फेस किंवा बुडबुडे आले, तर ते वॉशिंग पावडरची उपस्थिती दर्शवते. शुद्ध आईस्क्रीम फक्त फाटेल (curdle होईल)."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=lfm59Uu0GK4"
                         }
                     ],
                     labTests: [
-                        { name: "Chemical analysis for carbonates", why: "Detects washing soda/powder", approxCost: "$40-50" }
+                        { name: { en: "Chemical analysis for carbonates", mr: "कार्बोनेटसाठी रासायनिक विश्लेषण" }, why: { en: "Detects washing soda/powder", mr: "वॉशिंग सोडा/पावडर शोधते" }, approxCost: "$40-50" }
                     ],
                     questions: [
-                        { q: "Does it froth and bubble when lemon juice is added?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "This is a direct indication of alkaline washing powder." }
+                        { q: { en: "Does it froth and bubble when lemon juice is added?", mr: "लिंबाचा रस टाकल्यावर त्याला फेस आणि बुडबुडे येतात का?" }, type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: { en: "This is a direct indication of alkaline washing powder.", mr: "हे अल्कधर्मी वॉशिंग पावडरचे थेट लक्षण आहे." } }
                     ]
                 },
                 {
                     id: "coconut-oil",
-                    name: "Coconut Oil",
+                    name: { en: "Coconut Oil", mr: "नारळ तेल" },
                     image: "images/coconut-oil.jpg",
-                    description: "Solid-at-room-temp coconut oil, can be mixed with other cheaper liquid oils.",
+                    description: { en: "Solid-at-room-temp coconut oil, can be mixed with other cheaper liquid oils.", mr: "सामान्य तापमानाला घट्ट होणारे नारळ तेल, इतर स्वस्त द्रव तेलांमध्ये मिसळले जाऊ शकते." },
                     adulterations: [
-                        { name: "Liquid paraffin", explanation: "Mineral oil, non-edible", severity: "critical" },
-                        { name: "Other vegetable oils", explanation: "Cheaper oils to increase volume", severity: "high" }
+                        { name: { en: "Liquid paraffin", mr: "लिक्विड पॅराफिन" }, explanation: { en: "Mineral oil, non-edible", mr: "मिनरल ऑइल, अखाद्य" }, severity: "critical" },
+                        { name: { en: "Other vegetable oils", mr: "इतर वनस्पती तेल" }, explanation: { en: "Cheaper oils to increase volume", mr: "प्रमाण वाढवण्यासाठी स्वस्त तेल" }, severity: "high" }
                     ],
                     homeTests: [
                         {
                             id: "coconut-fridge",
-                            title: "Refrigeration Test",
+                            title: { en: "Refrigeration Test", mr: "रेफ्रिजरेशन चाचणी" },
                             instructions: [
-                                "Place a jar of the coconut oil in the refrigerator for 1 hour.",
-                                "Observe the solidification."
+                                { en: "Place a jar of the coconut oil in the refrigerator for 1 hour.", mr: "नारळ तेलाची बाटली १ तास फ्रीजमध्ये ठेवा." },
+                                { en: "Observe the solidification.", mr: "घट्टपणा तपासा." }
                             ],
-                            expectedOutcome: "Pure coconut oil solidifies completely and uniformly. If it's adulterated with other oils, they may form a separate liquid layer on top or the mixture will be slushy.",
+                            expectedOutcome: {
+                                en: "Pure coconut oil solidifies completely and uniformly. If adulterated, they may form a separate liquid layer on top.",
+                                mr: "शुद्ध नारळ तेल पूर्णपणे आणि एकसारखे घट्ट होते. भेसळ असल्यास, वरती वेगळा द्रव थर तयार होऊ शकतो."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=1-jnsfhmjaQ"
                         }
                     ],
                     labTests: [
-                        { name: "Saponification value", why: "Identifies the type of fat", approxCost: "$50-60" }
+                        { name: { en: "Saponification value", mr: "सॅपोनिफिकेशन मूल्य" }, why: { en: "Identifies the type of fat", mr: "चरबीचा प्रकार ओळखते" }, approxCost: "$50-60" }
                     ],
                     questions: [
-                        { q: "Does it solidify completely in the fridge?", type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: "Pure coconut oil has a high melting point and should solidify." },
-                        { q: "Does a separate liquid layer form when refrigerated?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "This indicates mixing with other oils that have a lower freezing point." }
+                        { q: { en: "Does it solidify completely in the fridge?", mr: "ते फ्रीजमध्ये पूर्णपणे घट्ट होते का?" }, type: "boolean", weight: 0.6, failIfTrue: false, ideal: true, reason: { en: "Pure coconut oil has a high melting point and should solidify.", mr: "शुद्ध नारळ तेलाचा वितळण्याचा बिंदू (melting point) जास्त असतो आणि ते घट्ट झाले पाहिजे." } },
+                        { q: { en: "Does a separate liquid layer form when refrigerated?", mr: "फ्रीजमध्ये ठेवल्यावर वेगळा द्रव थर तयार होतो का?" }, type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: { en: "This indicates mixing with other oils.", mr: "हे इतर तेलांची भेसळ दर्शवते." } }
                     ]
                 },
                 {
                     id: "wheat-flour",
-                    name: "Wheat Flour (Atta)",
+                    name: { en: "Wheat Flour (Atta)", mr: "गव्हाचे पीठ (आटा)" },
                     image: "images/wheat-flour.jpg",
-                    description: "Milled wheat flour, can be adulterated with excess bran, chalk, or sand.",
+                    description: { en: "Milled wheat flour, can be adulterated with excess bran, chalk, or sand.", mr: "गव्हाचे पीठ, जास्तीचा कोंडा, खडू किंवा वाळूने भेसळलेले असू शकते." },
                     adulterations: [
-                        { name: "Chalk powder", explanation: "Adds weight", severity: "high" },
-                        { name: "Excess bran", explanation: "Cheaper filler, removed from finer flours and added back", severity: "medium" },
-                        { name: "Boric acid", explanation: "Added as a preservative", severity: "critical" }
+                        { name: { en: "Chalk powder", mr: "खडू पावडर" }, explanation: { en: "Adds weight", mr: "वजन वाढवते" }, severity: "high" },
+                        { name: { en: "Excess bran", mr: "जास्तीचा कोंडा" }, explanation: { en: "Cheaper filler", mr: "स्वस्त फिलर" }, severity: "medium" },
+                        { name: { en: "Boric acid", mr: "बोरिक ऍसिड" }, explanation: { en: "Added as a preservative", mr: "प्रिझर्व्हेटिव्ह म्हणून" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "flour-water",
-                            title: "Water Float Test",
+                            title: { en: "Water Float Test", mr: "पाण्यात तरंगण्याची चाचणी" },
                             instructions: [
-                                "Sprinkle a spoonful of flour onto a glass of water.",
-                                "Observe what floats."
+                                { en: "Sprinkle a spoonful of flour onto a glass of water.", mr: "एक चमचा पीठ पाण्याच्या ग्लासवर टाका." },
+                                { en: "Observe what floats.", mr: "काय तरंगते ते पहा." }
                             ],
-                            expectedOutcome: "Pure flour will float or be suspended. Heavier adulterants like sand or chalk will sink. Excess bran will float noticeably on the surface.",
+                            expectedOutcome: {
+                                en: "Pure flour will float or be suspended. Heavier adulterants like sand or chalk will sink. Excess bran will float noticeably.",
+                                mr: "शुद्ध पीठ तरंगेल. वाळू किंवा खडू सारखी जड भेसळ बुडेल. जास्तीचा कोंडा स्पष्टपणे तरंगेल."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=azBztyWRwpY"
                         }
                     ],
                     labTests: [
-                        { name: "Acid-insoluble ash test", why: "Detects sand and chalk", approxCost: "$30-40" }
+                        { name: { en: "Acid-insoluble ash test", mr: "ऍसिड-अघुलनशील राख चाचणी" }, why: { en: "Detects sand and chalk", mr: "वाळू आणि खडू शोधते" }, approxCost: "$30-40" }
                     ],
                     questions: [
-                        { q: "Does the dough feel excessively rough or fibrous?", type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: "Indicates excess bran." },
-                        { q: "Does a residue settle when mixed with water?", type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: "Indicates chalk or sand." }
+                        { q: { en: "Does the dough feel excessively rough or fibrous?", mr: "कणिक (पीठ) जास्त खरखरीत किंवा तंतुमय वाटते का?" }, type: "boolean", weight: 0.4, failIfTrue: true, ideal: false, reason: { en: "Indicates excess bran.", mr: "जास्तीचा कोंडा दर्शवते." } },
+                        { q: { en: "Does a residue settle when mixed with water?", mr: "पाण्यात मिसळल्यावर गाळ खाली बसतो का?" }, type: "boolean", weight: 0.6, failIfTrue: true, ideal: false, reason: { en: "Indicates chalk or sand.", mr: "खडू किंवा वाळू दर्शवते." } }
                     ]
                 },
                 {
                     id: "fish",
-                    name: "Fish (Fresh)",
+                    name: { en: "Fish (Fresh)", mr: "मासे (ताजे)" },
                     image: "images/fish.jpg",
-                    description: "Fresh fish, sometimes preserved with Formalin to prevent spoilage.",
+                    description: { en: "Fresh fish, sometimes preserved with Formalin to prevent spoilage.", mr: "ताजे मासे, कधीकधी खराब होऊ नये म्हणून फॉर्मेलिनने संरक्षित." },
                     adulterations: [
-                        { name: "Formalin (Formaldehyde)", explanation: "Toxic preservative used to mask spoilage", severity: "critical" }
+                        { name: { en: "Formalin (Formaldehyde)", mr: "फॉर्मेलिन (फॉर्मल्डिहाइड)" }, explanation: { en: "Toxic preservative used to mask spoilage", mr: "खराब वास लपवण्यासाठी विषारी प्रिझर्व्हेटिव्ह" }, severity: "critical" }
                     ],
                     homeTests: [
                         {
                             id: "fish-formalin",
-                            title: "Formalin Test",
+                            title: { en: "Formalin Test", mr: "फॉर्मेलिन चाचणी" },
                             instructions: [
-                                "Take 4g of fish, mash it, and mix with 10ml of distilled water.",
-                                "Filter the liquid into a test tube.",
-                                "Add 2-3 drops of Tollen's reagent (or a commercial test kit).",
-                                "Warm gently."
+                                { en: "Take 4g of fish, mash it, and mix with 10ml of distilled water.", mr: "४ ग्रॅम मासे घ्या, कुस्करून १० मिली डिस्टिल्ड वॉटरमध्ये मिसळा." },
+                                { en: "Filter the liquid into a test tube.", mr: "द्रव एका टेस्ट ट्यूबमध्ये गाळून घ्या." },
+                                { en: "Add 2-3 drops of Tollen's reagent (or a commercial test kit).", mr: "२-३ थेंब टॉलनचे रीएजंट (किंवा चाचणी किट) टाका." },
+                                { en: "Warm gently.", mr: "हळूवार गरम करा." }
                             ],
-                            expectedOutcome: "The formation of a silver mirror or a black precipitate indicates the presence of formaldehyde (Formalin).",
+                            expectedOutcome: {
+                                en: "The formation of a silver mirror or a black precipitate indicates the presence of formaldehyde (Formalin).",
+                                mr: "चांदीचा थर (silver mirror) किंवा काळा साका (precipitate) तयार होणे फॉर्मल्डिहाइड (फॉर्मेलिन) ची उपस्थिती दर्शवते."
+                            },
                             videoUrl: "http://www.youtube.com/watch?v=kYrqWQu_rFc"
                         }
                     ],
                     labTests: [
-                        { name: "Formaldehyde detection kit", why: "Quantitative analysis of Formalin", approxCost: "$20-30" }
+                        { name: { en: "Formaldehyde detection kit", mr: "फॉर्मल्डिहाइड ओळख किट" }, why: { en: "Quantitative analysis of Formalin", mr: "फॉर्मेलिनचे परिमाणात्मक विश्लेषण" }, approxCost: "$20-30" }
                     ],
                     questions: [
-                        { q: "Does the fish have an unnaturally pungent, 'chemical' smell?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "This is a key sign of Formalin." },
-                        { q: "Are the gills bright red but the fish feels rubbery and hard?", type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: "Formalin 'fixes' the tissue, making it hard, while the color may still look fresh." }
+                        { q: { en: "Does the fish have an unnaturally pungent, 'chemical' smell?", mr: "माशांना अस्वाभाविकपणे तीव्र, 'केमिकल' वास येतो का?" }, type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: { en: "This is a key sign of Formalin.", mr: "हे फॉर्मेलिनचे मुख्य लक्षण आहे." } },
+                        { q: { en: "Are the gills bright red but the fish feels rubbery and hard?", mr: "कल्ले (gills) चमकदार लाल आहेत पण मासे रबरासारखे आणि कडक वाटतात का?" }, type: "boolean", weight: 0.5, failIfTrue: true, ideal: false, reason: { en: "Formalin 'fixes' the tissue, making it hard.", mr: "फॉर्मेलिन टिश्यूला 'फिक्स' करते, ज्यामुळे ते कडक होते." } }
                     ]
                 },
                 {
                     id: "cucumber",
-                    name: "Cucumber",
+                    name: { en: "Cucumber", mr: "काकडी" },
                     image: "images/cucumber.jpg",
-                    description: "Fresh cucumbers, sometimes waxed or dyed for better appearance.",
+                    description: { en: "Fresh cucumbers, sometimes waxed or dyed for better appearance.", mr: "ताज्या काकड्या, कधीकधी चांगल्या दिसण्यासाठी वॅक्स किंवा रंग लावलेल्या." },
                     adulterations: [
-                        { name: "Wax coating", explanation: "Used for shine and longer shelf life", severity: "medium" },
-                        { name: "Artificial dye", explanation: "Color added to enhance green appearance", severity: "high" }
+                        { name: { en: "Wax coating", mr: "वॅक्स कोटिंग" }, explanation: { en: "Used for shine and longer shelf life", mr: "चमक आणि जास्त काळ टिकण्यासाठी" }, severity: "medium" },
+                        { name: { en: "Artificial dye", mr: "कृत्रिम रंग" }, explanation: { en: "Color added to enhance green appearance", mr: "हिरवा रंग वाढवण्यासाठी" }, severity: "high" }
                     ],
                     homeTests: [
-                        { id: "cucumber-scratch", title: "Scratch Test", instructions: ["Scratch the skin with a knife."], expectedOutcome: "If a color comes off, dye may have been used.", videoUrl: "http://www.youtube.com/watch?v=sso_P8thc9Q" }
+                        { id: "cucumber-scratch", title: { en: "Scratch Test", mr: "खरवडण्याची चाचणी" }, instructions: [{ en: "Scratch the skin with a knife.", mr: "सुरीने साल खरवडा." }], expectedOutcome: { en: "If a color comes off, dye may have been used.", mr: "जर रंग निघाला, तर डाईचा वापर केला गेला असू शकतो." }, videoUrl: "http://www.youtube.com/watch?v=sso_P8thc9Q" }
                     ],
                     labTests: [
-                        { name: "Surface dye detection", why: "Detects synthetic food colors", approxCost: "$20-30" } 
+                        { name: { en: "Surface dye detection", mr: "पृष्ठभागावरील रंग ओळख" }, why: { en: "Detects synthetic food colors", mr: "सिंथेटिक फूड कलर शोधते" }, approxCost: "$20-30" } 
                     ],
                     questions: [
-                        { q: "Does the cucumber stain your fingers or knife?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "Cucumbers should not leave dye on touch or scratch." }
+                        { q: { en: "Does the cucumber stain your fingers or knife?", mr: "काकडीमुळे तुमच्या बोटांना किंवा सुरीला रंग लागतो का?" }, type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: { en: "Cucumbers should not leave dye on touch or scratch.", mr: "काकडीने स्पर्श केल्यावर किंवा खरवडल्यावर रंग सोडायला नको." } }
                     ]
                 },
- 
                 {
                     id: "rice",
-                    name: "Rice",
+                    name: { en: "Rice", mr: "तांदूळ" },
                     image: "images/rice.jpg",
-                    description: "Rice grains, sometimes mixed with plastic rice or stones.",
+                    description: { en: "Rice grains, sometimes mixed with plastic rice or stones.", mr: "तांदळाचे दाणे, कधीकधी प्लास्टिक तांदूळ किंवा खड्यांसह भेसळ." },
                     adulterations: [
-                        { name: "Plastic rice", explanation: "Fake rice grains made from synthetic materials", severity: "critical" },
-                        { name: "Small stones", explanation: "Used to increase weight", severity: "medium" }
+                        { name: { en: "Plastic rice", mr: "प्लास्टिक तांदूळ" }, explanation: { en: "Fake rice grains made from synthetic materials", mr: "सिंथेटिक पदार्थांपासून बनवलेले बनावट तांदळाचे दाणे" }, severity: "critical" },
+                        { name: { en: "Small stones", mr: "बारीक खडे" }, explanation: { en: "Used to increase weight", mr: "वजन वाढवण्यासाठी" }, severity: "medium" }
                     ],
                     homeTests: [
-                        { id: "rice-water", title: "Water Test", instructions: ["Drop rice grains in water, stir and look for floating grains."], expectedOutcome: "Plastic rice floats. Natural rice generally sinks.", videoUrl: "http://www.youtube.com/watch?v=hz7ru9P-U7M" }
+                        { id: "rice-water", title: { en: "Water Test", mr: "पाण्याची चाचणी" }, instructions: [{ en: "Drop rice grains in water, stir and look for floating grains.", mr: "तांदळाचे दाणे पाण्यात टाका, ढवळा आणि तरंगणारे दाणे पहा." }], expectedOutcome: { en: "Plastic rice floats. Natural rice generally sinks.", mr: "प्लास्टिक तांदूळ तरंगतो. नैसर्गिक तांदूळ साधारणपणे बुडतो." }, videoUrl: "http://www.youtube.com/watch?v=hz7ru9P-U7M" }
                     ],
                     labTests: [
-                        { name: "Microscopic examination", why: "Identifies fake/unnatural grains", approxCost: "$20-30" }
+                        { name: { en: "Microscopic examination", mr: "सूक्ष्मदर्शी तपासणी" }, why: { en: "Identifies fake/unnatural grains", mr: "बनावट/अनैसर्गिक दाणे ओळखते" }, approxCost: "$20-30" }
                     ],
                     questions: [
-                        { q: "Do many grains float in water?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "Normal rice sinks; floating grains could be plastic." }
+                        { q: { en: "Do many grains float in water?", mr: "बरेच दाणे पाण्यात तरंगतात का?" }, type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: { en: "Normal rice sinks; floating grains could be plastic.", mr: "सामान्य तांदूळ बुडतो; तरंगणारे दाणे प्लास्टिकचे असू शकतात." } }
                     ]
                 },
                 {
                     id: "mustard-oil",
-                    name: "Mustard Oil",
+                    name: { en: "Mustard Oil", mr: "मोहरीचे तेल" },
                     image: "images/mustard-oil.jpg",
-                    description: "Mustard oil, sometimes mixed with Argemone oil (toxic).",
+                    description: { en: "Mustard oil, sometimes mixed with Argemone oil (toxic).", mr: "मोहरीचे तेल, कधीकधी आर्जेमोन तेलाने (विषारी) भेसळलेले." },
                     adulterations: [
-                        { name: "Argemone oil", explanation: "Toxic oil added for cheap adulteration", severity: "critical" } 
+                        { name: { en: "Argemone oil", mr: "आर्जेमोन तेल" }, explanation: { en: "Toxic oil added for cheap adulteration", mr: "स्वस्त भेसळीसाठी विषारी तेल" }, severity: "critical" } 
                     ],
                     homeTests: [
-                        { id: "mustard-acid", title: "Acid Test", instructions: ["Mix a small quantity of oil with nitric acid."], expectedOutcome: "A red color indicates Argemone oil is present.", videoUrl: "http://www.youtube.com/watch?v=98eRZgbH4og" }
+                        { id: "mustard-acid", title: { en: "Acid Test", mr: "ऍसिड चाचणी" }, instructions: [{ en: "Mix a small quantity of oil with nitric acid.", mr: "थोडे तेल नायट्रिक ऍसिडमध्ये मिसळा." }], expectedOutcome: { en: "A red color indicates Argemone oil is present.", mr: "लाल रंग आर्जेमोन तेलाची उपस्थिती दर्शवतो." }, videoUrl: "http://www.youtube.com/watch?v=98eRZgbH4og" }
                     ],
                     labTests: [
-                        { name: "Thin Layer Chromatography", why: "Definitively detects Argemone oil", approxCost: "$40-70" }
+                        { name: { en: "Thin Layer Chromatography", mr: "थिन लेयर क्रोमॅटोग्राफी" }, why: { en: "Definitively detects Argemone oil", mr: "आर्जेमोन तेल निश्चितपणे शोधते" }, approxCost: "$40-70" }
                     ],
                     questions: [
-                        { q: "Is the oil extremely pungent or bitter?", type: "boolean", weight: 1.0, failIfTrue: false, ideal: true, reason: "Mustard oil is strong but not bitter as Argemone." }
+                        { q: { en: "Does the oil have a very sharp, pungent smell?", mr: "तेलाला खूप तीव्र, झणझणीत वास आहे का?" }, type: "boolean", weight: 1.0, failIfTrue: false, ideal: true, reason: { en: "Mustard oil is strong, but Argemone oil can make it unusually pungent.", mr: "मोहरीचे तेल तीव्र असते, परंतु आर्जेमोन तेल ते असामान्यपणे तीव्र बनवू शकते." } }
                     ]
                 },
                 {
                     id: "yogurt",
-                    name: "Yogurt (Curd)",
+                    name: { en: "Yogurt (Curd)", mr: "दही" },
                     image: "images/yogurt.jpg",
-                    description: "Yogurt may contain milk powder or thickeners instead of fresh milk.",
+                    description: { en: "Yogurt may contain milk powder or thickeners instead of fresh milk.", mr: "दह्यामध्ये ताज्या दुधाऐवजी दूध पावडर किंवा घट्ट करणारे पदार्थ असू शकतात." },
                     adulterations: [
-                        { name: "Milk powder", explanation: "Used to mimic thickness of real curd", severity: "medium" },
-                        { name: "Starch", explanation: "Added for extra consistency", severity: "medium" } 
+                        { name: { en: "Milk powder", mr: "दूध पावडर" }, explanation: { en: "Used to mimic thickness of real curd", mr: "खऱ्या दह्याच्या घट्टपणाची नक्कल करण्यासाठी" }, severity: "medium" },
+                        { name: { en: "Starch", mr: "स्टार्च" }, explanation: { en: "Added for extra consistency", mr: "जास्तीच्या घट्टपणासाठी" }, severity: "medium" } 
                     ],
                     homeTests: [
-                        { id: "yogurt-iodine", title: "Iodine Test", instructions: ["Add few drops of iodine to yogurt and observe."], expectedOutcome: "Blue-black color indicates starch presence.", videoUrl: "http://www.youtube.com/watch?v=Hy41dqjjoYU" }
+                        { id: "yogurt-iodine", title: { en: "Iodine Test", mr: "आयोडीन चाचणी" }, instructions: [{ en: "Add few drops of iodine to yogurt and observe.", mr: "दह्यात आयोडीनचे काही थेंब टाका आणि निरीक्षण करा." }], expectedOutcome: { en: "Blue-black color indicates starch presence.", mr: "निळा-काळा रंग स्टार्चची उपस्थिती दर्शवतो." }, videoUrl: "http://www.youtube.com/watch?v=Hy41dqjjoYU" }
                     ],
                     labTests: [
-                        { name: "Dairy composition analysis", why: "Checks milk powder or additives", approxCost: "$20-40" }
+                        { name: { en: "Dairy composition analysis", mr: "दुग्धजन्य पदार्थ रचना विश्लेषण" }, why: { en: "Checks milk powder or additives", mr: "दूध पावडर किंवा भेसळ तपासते" }, approxCost: "$20-40" }
                     ],
                     questions: [
-                        { q: "Does it turn bluish with iodine?", type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: "Color change means starch, not real curd." }
+                        { q: { en: "Does it turn bluish with iodine?", mr: "आयोडीनने ते निळसर होते का?" }, type: "boolean", weight: 1.0, failIfTrue: true, ideal: false, reason: { en: "Color change means starch, not real curd.", mr: "रंग बदल म्हणजे स्टार्च, खरे दही नाही." } }
                     ]
                 }
             ]
         };
+        
+
+        // --- Core Application Logic ---
 
         // Theme Toggle
         const themeToggle = document.getElementById('theme-toggle');
@@ -1388,132 +1579,22 @@
         // Utility functions
         function highlightText(text, query) {
             if (!query) return text;
-            const regex = new RegExp(`(${query.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")})`, 'gi');
-            return text.replace(regex, '<mark>$1</mark>');
-        }
-
-        // --- Localization ---
-        const PRODUCT_NAME_MR = {
-            "Milk": "दूध",
-            "Honey": "मध",
-            "Turmeric Powder": "हळद पावडर",
-            "Ghee (Clarified Butter)": "तूप",
-            "Olive Oil": "ऑलिव्ह तेल",
-            "Mixed Spices (Garam Masala)": "गरम मसाला",
-            "Sugar": "साखर",
-            "Pulses (Lentils)": "डाळी",
-            "Coffee Powder": "कॉफी पावडर",
-            "Red Chilli Powder": "लाल तिखट",
-            "Black Pepper (Whole)": "काळी मिरी",
-            "Tea Leaves": "चहा पाने",
-            "Apples (Wax Coating)": "सफरचंद (वॅक्स)",
-            "Green Peas": "हिरवे वाटाणे",
-            "Coriander Powder": "धणे पावडर",
-            "Saffron": "केशर",
-            "Ice Cream": "आईस्क्रीम",
-            "Coconut Oil": "नारळ तेल",
-            "Wheat Flour (Atta)": "गहू पीठ (आटा)",
-            "Fish (Fresh)": "मासे (ताजे)",
-            "Cucumber": "काकडी",
-            "Rice": "तांदूळ",
-            "Mustard Oil": "मोहरीचे तेल",
-            "Yogurt (Curd)": "दही"
-        };
-
-        const UI_TEXT = {
-            en: {
-                appTitle: 'Food Safety Guide',
-                heroTitle: 'Food Adulteration Testing Guide',
-                heroSubtitle: "Verify the authenticity of your food with simple home tests and expert guidance.",
-                searchPlaceholder: 'Search for a food item (e.g., milk, honey, turmeric)',
-                resultsNone: 'No search results found.',
-                viewTests: 'View Tests',
-                video: 'Video',
-                qaCheck: 'Q & A Check',
-                calcScore: 'Calculate Score',
-                showIssues: 'Show Issues',
-                clear: 'Clear',
-                productDetails: 'Product Details',
-                commonAdulterations: 'Common Adulterations',
-                professionalLabTests: 'Professional Lab Tests',
-                homeTests: 'Home Tests'
-            },
-            mr: {
-                appTitle: 'अन्न सुरक्षा मार्गदर्शक',
-                heroTitle: 'अन्न भेसळ तपासणी मार्गदर्शक',
-                heroSubtitle: "सोप्या घरगुती चाचण्यांनी तुमच्या अन्नाची खरी ओळख तपासा.",
-                searchPlaceholder: 'अन्न वस्तू शोधा (उदा., दूध, मध, हळद)',
-                resultsNone: 'कोणतेही निकाल सापडले नाहीत.',
-                viewTests: 'चाचण्या पहा',
-                video: 'व्हिडिओ',
-                qaCheck: 'प्र. आणि उ. तपासणी',
-                calcScore: 'स्कोअर काढा',
-                showIssues: 'समस्या दाखवा',
-                clear: 'रीसेट',
-                productDetails: 'उत्पादन तपशील',
-                commonAdulterations: 'सामान्य भेसळ',
-                professionalLabTests: 'व्यावसायिक प्रयोगशाळा चाचण्या',
-                homeTests: 'घरच्या घरी चाचण्या'
+            try {
+                const regex = new RegExp(`(${query.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")})`, 'gi');
+                return text.replace(regex, '<mark>$1</mark>');
+            } catch (e) {
+                return text;
             }
-        };
-
-        function getLang(){ return localStorage.getItem('lang') || 'en'; }
-        function setLang(lang){ localStorage.setItem('lang', lang); }
-
-        function localizeStaticUI(lang){
-            const t = UI_TEXT[lang] || UI_TEXT.en;
-            const logo = document.querySelector('.logo'); if (logo) logo.textContent = t.appTitle;
-            const heroTitle = document.getElementById('hero-title'); if (heroTitle) heroTitle.textContent = t.heroTitle;
-            const heroP = document.querySelector('.hero p'); if (heroP) heroP.textContent = t.heroSubtitle;
-            const search = document.getElementById('food-search'); if (search) search.placeholder = t.searchPlaceholder;
-            const modalTitle = document.getElementById('modal-title'); if (modalTitle) modalTitle.textContent = t.productDetails;
-            // Modal section headings
-            const cards = document.querySelectorAll('#left-col .card h3');
-            if (cards && cards.length >= 3){
-                if (cards[0]) cards[0].textContent = t.commonAdulterations;
-                if (cards[1]) cards[1].textContent = t.professionalLabTests;
-                if (cards[2]) cards[2].textContent = t.homeTests;
-            }
-            const videoH3 = document.querySelector('.video-card h3'); if (videoH3) videoH3.textContent = t.video;
-            const qaH3 = document.querySelector('.qa-card h3'); if (qaH3) qaH3.textContent = t.qaCheck;
-            const calcBtn = document.getElementById('calculate-score-btn'); if (calcBtn) calcBtn.textContent = t.calcScore;
-            const showBtn = document.getElementById('show-wrong-btn'); if (showBtn) showBtn.textContent = t.showIssues;
-            const clearBtn = document.getElementById('clear-qa'); if (clearBtn) clearBtn.textContent = t.clear;
         }
-
-        function localizeItemName(name, lang){
-            if (lang !== 'mr') return name;
-            return PRODUCT_NAME_MR[name] || name;
-        }
-
-        // Provide generic fallback questions to ensure every product has 5 questions
-        const GENERIC_QUESTION_BANK = [
-            { q: "Is the color natural-looking rather than overly bright?", type: "boolean", weight: 0.2, failIfTrue: false, ideal: true, reason: "Overly bright colors may indicate artificial dyes." },
-            { q: "Does the aroma smell fresh and characteristic for this product?", type: "boolean", weight: 0.2, failIfTrue: false, ideal: true, reason: "Atypical or weak aroma can suggest adulteration or staleness." },
-            { q: "Do you notice any unusual residues when mixed with water?", type: "boolean", weight: 0.2, failIfTrue: true, ideal: false, reason: "Sediment or scum may indicate fillers or contaminants." },
-            { q: "Is the texture consistent with what you expect for this product?", type: "boolean", weight: 0.2, failIfTrue: true, ideal: false, reason: "Grittiness or sliminess can signal impurities or additives." },
-            { q: "How would you rate the taste compared to a trusted brand?", type: "choice", options: ["Off/Strange", "Acceptable", "Typical/Good"], weight: 0.2, ideal: "Typical/Good", reason: "Atypical taste can indicate dilution or mixing." }
-        ];
-
-        function ensureFiveQuestions(questions) {
-            const result = Array.isArray(questions) ? [...questions] : [];
-            let i = 0;
-            while (result.length < 5 && i < GENERIC_QUESTION_BANK.length) {
-                result.push(GENERIC_QUESTION_BANK[i]);
-                i++;
-            }
-            return result.slice(0, 5);
-        }
-
+        
         // Currency: Convert USD strings (e.g., "$20-30") to INR (e.g., "₹1,660–₹2,490")
         function formatINR(n){
             try { return new Intl.NumberFormat('en-IN').format(n); } catch(e){ return String(n); }
         }
         function convertUsdTextToInr(text, rate = 83){
             if (!text || typeof text !== 'string') return text;
-            // Matches patterns like $20-30 or $50
             const rangeMatch = text.match(/^\$(\d{1,3})(?:-(\d{1,3}))?$/);
-            if (!rangeMatch) return text; // return as-is if not a pure USD price field
+            if (!rangeMatch) return text; 
             const low = parseInt(rangeMatch[1], 10);
             const high = rangeMatch[2] ? parseInt(rangeMatch[2], 10) : null;
             if (Number.isNaN(low)) return text;
@@ -1530,18 +1611,8 @@
          * @param {string} text - The text to display on the placeholder.
          */
         function createPlaceholder(text) {
-            // Sanitize text for SVG and URL
-            const safeText = encodeURIComponent(text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;'));
-            
-            // A simple SVG template using hex codes for theme colors
-            // Light: fill='%23e2e8f0' (border), fill='%2364748b' (text-muted)
-            // Dark: fill='%23334155' (border), fill='%2394a3b8' (text-muted)
-            // We'll use the light theme for simplicity as data URIs can't read CSS vars
+            const safeText = encodeURIComponent(text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
             const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e2e8f0'/><text x='50' y='55' font-family='Inter, sans-serif' font-size='12' fill='%2364748b' text-anchor='middle'>${safeText}</text></svg>`;
-            
             return `data:image/svg+xml,${svg}`;
         }
 
@@ -1550,28 +1621,36 @@
         function filterItems(query) {
             const items = JSON.parse(localStorage.getItem('foodItems') || '[]');
             query = query.toLowerCase().trim();
+            const lang = getLang();
             
-            return items.filter(item => 
-                item.name.toLowerCase().includes(query) ||
-                item.description.toLowerCase().includes(query) ||
-                item.adulterations.some(a => 
-                    a.name.toLowerCase().includes(query) ||
-                    a.explanation.toLowerCase().includes(query)
-                )
-            );
+            return items.filter(item => {
+                // Check name, description in current language
+                if (t(item.name, lang).toLowerCase().includes(query)) return true;
+                if (t(item.description, lang).toLowerCase().includes(query)) return true;
+                
+                // Check adulterations in current language
+                if (item.adulterations.some(a => t(a.name, lang).toLowerCase().includes(query) || t(a.explanation, lang).toLowerCase().includes(query))) return true;
+
+                // Also check in English, as a fallback
+                if (lang !== 'en') {
+                    if (t(item.name, 'en').toLowerCase().includes(query)) return true;
+                    if (item.adulterations.some(a => t(a.name, 'en').toLowerCase().includes(query))) return true;
+                }
+                
+                return false;
+            });
         }
 
         function createProductCard(item, query = '') {
             const li = document.createElement('li');
             li.className = 'product-card';
             
-            // Create a placeholder URI based on the item's name
             const lang = getLang();
-            const localizedName = localizeItemName(item.name, lang);
+            const localizedName = t(item.name, lang);
             const placeholderSrc = createPlaceholder(localizedName);
             
             li.innerHTML = `
-                <a href="product.html?id=${item.id}" aria-label="${item.name}">
+                <a href="product.html?id=${item.id}" aria-label="${localizedName}">
                     <img src="${item.image}" 
                          alt="${localizedName}" 
                          class="product-image"
@@ -1583,12 +1662,12 @@
                         ${highlightText(localizedName, query)}
                     </h3>
                     <p class="product-description">
-                        ${highlightText(item.description, query)}
+                        ${highlightText(t(item.description, lang), query)}
                     </p>
                     <div class="product-tags">
                         ${item.adulterations.map(a => `
                             <span class="tag tag-${a.severity}">
-                                ${highlightText(a.name, query)}
+                                ${highlightText(t(a.name, lang), query)}
                             </span>
                         `).join('')}
                     </div>
@@ -1601,7 +1680,7 @@
             return li;
         }
 
-        // --- Product Modal Logic (moved from product.html) ---
+        // --- Product Modal Logic ---
         function calculateScore(answers, questions) {
             let totalScore = 0;
             let totalWeight = 0;
@@ -1609,15 +1688,19 @@
                 const q = questions[index];
                 const answer = answers[index];
                 if (answer === undefined || answer === null) continue;
+                
                 totalWeight += q.weight;
+                
                 if (q.type === 'boolean') {
-                    if (q.failIfTrue) {
-                        if (answer === false) { totalScore += q.weight; }
-                    } else {
-                        if (answer === true) { totalScore += q.weight; }
+                    // Note: 'ideal' is the "good" answer (true or false)
+                    if (answer === q.ideal) { 
+                        totalScore += q.weight; 
                     }
                 } else if (q.type === 'choice') {
-                    if (answer === q.ideal) { totalScore += q.weight; }
+                    // 'ideal' stores the 'en' string of the best answer
+                    if (answer === q.ideal) { 
+                        totalScore += q.weight; 
+                    }
                 }
             }
             return totalWeight ? (totalScore / totalWeight) * 100 : 0;
@@ -1636,17 +1719,24 @@
                 } else if (q.type === 'boolean') {
                     answers.push(val === 'true');
                 } else {
-                    answers.push(val);
+                    answers.push(val); // This will be the 'en' string
                 }
             }
+            
             const score = calculateScore(answers, item.questions || []);
             const resultDiv = document.getElementById('qa-result');
             resultDiv.hidden = false;
+            
+            const lang = getLang();
+            const trans = UI_TEXT[lang] || UI_TEXT.en;
+            
             let scoreClass = 'success';
-            let message = `Purity Score: ${score.toFixed(0)}%`;
-            if (score < 50) { scoreClass = 'danger'; message += "<br>This product shows strong signs of adulteration."; }
-            else if (score < 80) { scoreClass = 'warning'; message += "<br>This product shows some potential issues. Perform home tests."; }
-            else { message += "<br>This product seems likely to be pure based on your observations."; }
+            let message = `${trans.scorePrefix}: ${score.toFixed(0)}%`;
+            
+            if (score < 50) { scoreClass = 'danger'; message += `<br>${trans.resultDanger}`; }
+            else if (score < 80) { scoreClass = 'warning'; message += `<br>${trans.resultWarning}`; }
+            else { message += `<br>${trans.resultSuccess}`; }
+            
             resultDiv.className = `qa-result ${scoreClass}`;
             resultDiv.innerHTML = `<strong>${message}</strong>`;
             resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1657,27 +1747,51 @@
             const wrong = [];
             const form = document.getElementById('qa-form');
             const formData = new FormData(form);
+            
+            const lang = getLang();
+            const trans = UI_TEXT[lang] || UI_TEXT.en;
+
             for (let i = 0; i < questions.length; i++){
                 const q = questions[i];
                 const val = formData.get(`q${i}`);
                 if (!val) continue;
-                let answer = (q.type === 'boolean') ? (val === 'true') : val;
+                
+                let answer; // The value the user selected
+                let userAnswerText; // The translated text of the user's answer
+                let reasonText = t(q.reason, lang);
+
                 if (q.type === 'boolean') {
-                    if (answer !== q.ideal) { wrong.push({ q: q.q, user: (answer ? 'Yes' : 'No'), reason: q.reason }); }
+                    answer = (val === 'true');
+                    userAnswerText = answer ? trans.yes : trans.no;
+                    if (answer !== q.ideal) { 
+                        wrong.push({ q: t(q.q, lang), user: userAnswerText, reason: reasonText }); 
+                    }
                 } else if (q.type === 'choice') {
-                    if (answer !== q.ideal) { wrong.push({ q: q.q, user: answer, reason: q.reason }); }
+                    answer = val; // This is the 'en' string, e.g., "Sticky"
+                    const chosenOption = (q.options || []).find(opt => t(opt, 'en') === answer);
+                    userAnswerText = chosenOption ? t(chosenOption, lang) : answer;
+                    
+                    if (answer !== q.ideal) { 
+                        wrong.push({ q: t(q.q, lang), user: userAnswerText, reason: reasonText }); 
+                    }
                 }
             }
+            
             const res = document.getElementById('qa-result');
             res.hidden = false;
+            
             if (wrong.length === 0){
                 res.className = 'qa-result success';
-                res.innerHTML = `<strong>No problematic answers detected.</strong> Based on your answers, the product observations are good.`;
+                res.innerHTML = trans.issuesNone;
             } else {
                 res.className = 'qa-result danger';
-                res.innerHTML = `<strong>Potential issues found (${wrong.length}):</strong>` +
+                res.innerHTML = trans.issuesFound.replace('{count}', wrong.length) +
                     `<ul style="margin:0.5rem 0 0 1.1rem">` +
-                    wrong.map(w => `<li><strong>${w.q}</strong><br>Your answer (<em>${w.user}</em>) suggests an issue: ${w.reason}</li>`).join('') +
+                    wrong.map(w => `<li><strong>${w.q}</strong><br>${
+                        trans.issueReason
+                            .replace('{userAnswer}', w.user)
+                            .replace('{reason}', w.reason)
+                    }</li>`).join('') +
                     `</ul>`;
             }
             res.scrollIntoView({behavior:'smooth', block:'center'});
@@ -1693,42 +1807,48 @@
 
         function renderItem(item){
             const lang = getLang();
+            const trans = UI_TEXT[lang] || UI_TEXT.en;
+            
             document.getElementById('prod-image').style.display = '';
             document.getElementById('prod-image').src = item.image || '';
-            document.getElementById('prod-image').alt = (localizeItemName(item.name, lang) || 'Image');
-            document.getElementById('prod-title').textContent = localizeItemName(item.name, lang) || '';
-            document.getElementById('prod-desc').textContent = item.description || '';
+            document.getElementById('prod-image').alt = (t(item.name, lang) || 'Image');
+            document.getElementById('prod-title').textContent = t(item.name, lang) || '';
+            document.getElementById('prod-desc').textContent = t(item.description, lang) || '';
+
             const adulterations = document.getElementById('adulterations-list');
-            adulterations.innerHTML = (item.adulterations || []).map(a => `<span class="tag tag-${a.severity}">${a.name}</span>`).join('');
+            adulterations.innerHTML = (item.adulterations || []).map(a => `<span class="tag tag-${a.severity}">${t(a.name, lang)}</span>`).join('');
+
             const lab = document.getElementById('lab-tests-list');
-            lab.innerHTML = (item.labTests || []).map(t => `
+            lab.innerHTML = (item.labTests || []).map(test => `
                 <li>
-                    <strong>${t.name}</strong>
-                    <p>${t.why}</p>
-                    <span>Approx. Cost: ${convertUsdTextToInr(t.approxCost)}</span>
+                    <strong>${t(test.name, lang)}</strong>
+                    <p>${t(test.why, lang)}</p>
+                    <span>Approx. Cost: ${convertUsdTextToInr(test.approxCost)}</span>
                 </li>
             `).join('');
+            if (!lab.innerHTML) lab.innerHTML = `<li>No lab tests listed.</li>`;
+
             const ht = document.getElementById('home-tests-list');
             ht.innerHTML = (item.homeTests || []).map(test => `
                 <div class="test-card">
-                    <h4>${test.title}</h4>
+                    <h4>${t(test.title, lang)}</h4>
                     <ol>
-                        ${(test.instructions || []).map(s => `<li>${s}</li>`).join('')}
+                        ${(test.instructions || []).map(s => `<li>${t(s, lang)}</li>`).join('')}
                     </ol>
                     <div class="outcome">
-                        <strong>Expected Outcome:</strong> ${test.expectedOutcome || ''}
+                        <strong>${trans.expectedOutcome}:</strong> ${t(test.expectedOutcome, lang) || ''}
                     </div>
                 </div>
             `).join('');
+            if (!ht.innerHTML) ht.innerHTML = `<p>No home tests listed.</p>`;
 
-            // Set video (prefer the first home test videoUrl if YouTube)
+            // Set video
             const frame = document.getElementById('prod-video');
             let videoUrl = '';
             if ((item.homeTests || []).length && item.homeTests[0].videoUrl) {
                 videoUrl = item.homeTests[0].videoUrl;
             }
             if (videoUrl && /youtube\.com|youtu\.be/.test(videoUrl)){
-                // Convert to embed form
                 try {
                     const u = new URL(videoUrl);
                     if (u.hostname.includes('youtu.be')) {
@@ -1746,27 +1866,32 @@
             // Ensure 5 questions for every product
             const paddedQuestions = ensureFiveQuestions(item.questions || []);
             const qaQs = document.getElementById('qa-questions');
+            
             qaQs.innerHTML = paddedQuestions.map((q, i) => {
                 let inputHtml = '';
                 if (q.type === 'boolean'){
                     inputHtml = `
                         <div class="radio-group">
-                            <label><input type="radio" name="q${i}" value="true" required> Yes</label>
-                            <label><input type="radio" name="q${i}" value="false" required> No</label>
+                            <label><input type="radio" name="q${i}" value="true" required> ${trans.yes}</label>
+                            <label><input type="radio" name="q${i}" value="false" required> ${trans.no}</label>
                         </div>`;
                 } else if (q.type === 'choice'){
                     inputHtml = `
                         <select name="q${i}" class="form-input" required>
-                            <option value="">Select an answer...</option>
-                            ${(q.options || []).map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                            <option value="">${trans.selectAnswer}</option>
+                            ${(q.options || []).map(opt => 
+                                `<option value="${t(opt, 'en')}">${t(opt, lang)}</option>`
+                            ).join('')}
                         </select>`;
                 }
                 return `
                     <div class="form-group">
-                        <label class="form-label">${q.q}</label>
+                        <label class="form-label">${t(q.q, lang)}</label>
                         ${inputHtml}
                     </div>`;
             }).join('');
+            
+            // Re-bind click handlers with the newly populated item data
             const itemWithFiveQs = { ...item, questions: paddedQuestions };
             document.getElementById('calculate-score-btn').onclick = (e) => submitQA(e, itemWithFiveQs);
             document.getElementById('show-wrong-btn').onclick = () => showWrongAnswers(itemWithFiveQs);
@@ -1789,11 +1914,19 @@
                 document.body.classList.add('modal-open');
                 return;
             }
+            
+            // Clear old Q&A form state before rendering new one
+            clearQAForm(); 
+            
             document.getElementById('right-col').hidden = false;
-            renderItem(item);
+            renderItem(item); // Render all translated content
             overlay.classList.add('open');
             overlay.setAttribute('aria-hidden', 'false');
             document.body.classList.add('modal-open');
+            
+            // Scroll modal columns to top
+            document.getElementById('left-col').scrollTop = 0;
+            document.getElementById('right-col').scrollTop = 0;
         }
 
         function closeModal(){
@@ -1801,12 +1934,15 @@
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
             document.body.classList.remove('modal-open');
+            
+            // Stop video
+            document.getElementById('prod-video').src = '';
         }
 
-        // Event Listeners
+        // --- Page Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             // Initialize data (versioned)
-            const DATA_VERSION = '3';
+            const DATA_VERSION = '4'; // unified data version
             const currentVersion = localStorage.getItem('dataVersion');
             let storedItems;
             try {
@@ -1815,33 +1951,52 @@
                 storedItems = [];
             }
 
-            if (!Array.isArray(storedItems) || storedItems.length === 0 || currentVersion !== DATA_VERSION) {
+            // If data is old, malformed, empty, or truncated compared to built-in sample, reload from sampleData
+            if (!Array.isArray(storedItems) || storedItems.length === 0 || currentVersion !== DATA_VERSION || (Array.isArray(sampleData.items) && storedItems.length < sampleData.items.length)) {
                 localStorage.setItem('foodItems', JSON.stringify(sampleData.items));
                 localStorage.setItem('dataVersion', DATA_VERSION);
+                storedItems = sampleData.items.slice();
             }
 
             if (!localStorage.getItem('testHistory')) {
                 localStorage.setItem('testHistory', JSON.stringify([]));
             }
 
-            // Apply saved language
             const savedLang = getLang();
             localizeStaticUI(savedLang);
 
-            // Set up search functionality
             const searchInput = document.getElementById('food-search');
             const resultsGrid = document.getElementById('results-grid');
             const suggestions = document.getElementById('search-suggestions');
 
+            // Helper to update product-count text
+            function updateProductCount(count){
+                const countEl = document.getElementById('product-count');
+                if (countEl) countEl.textContent = `Showing ${count} product${count === 1 ? '' : 's'}`;
+            }
+
             // Initial load of all items
-            const items = JSON.parse(localStorage.getItem('foodItems'));
-            if (items) {
+            const items = JSON.parse(localStorage.getItem('foodItems') || '[]');
+            if (Array.isArray(items) && items.length) {
                 for (const item of items) {
                     resultsGrid.appendChild(createProductCard(item));
                 }
             }
+            updateProductCount(Array.isArray(items) ? items.length : 0);
 
-            // Ensure clicks on links always navigate (safety net) -> now opens modal
+            // Reset data button: clears stored dataset and reloads sample data
+            const resetBtn = document.getElementById('reset-data');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    if (confirm('Reset product data to default sample set?')) {
+                        localStorage.removeItem('foodItems');
+                        localStorage.removeItem('dataVersion');
+                        location.reload();
+                    }
+                });
+            }
+
+            // Modal open handler (delegated)
             resultsGrid.addEventListener('click', (evt) => {
                 const link = evt.target.closest('a[href^="product.html?id="]');
                 if (link && resultsGrid.contains(link)) {
@@ -1857,6 +2012,11 @@
             document.getElementById('product-modal-overlay').addEventListener('click', (e) => {
                 if (e.target.id === 'product-modal-overlay') closeModal();
             });
+            document.addEventListener('keydown', (e) => {
+                 if (e.key === "Escape" && document.body.classList.contains('modal-open')) {
+                    closeModal();
+                 }
+            });
 
             // Language toggle
             const langBtn = document.getElementById('lang-toggle');
@@ -1866,12 +2026,22 @@
                     const next = current === 'mr' ? 'en' : 'mr';
                     setLang(next);
                     localizeStaticUI(next);
+                    
                     // Re-render grid to refresh localized names and button text
                     resultsGrid.innerHTML = '';
-                    const itemsNow = JSON.parse(localStorage.getItem('foodItems')) || [];
-                    for (const item of itemsNow) {
-                        resultsGrid.appendChild(createProductCard(item));
+                    const currentQuery = searchInput.value;
+                    const itemsToRender = filterItems(currentQuery); // Use filtered list
+                    
+                    if (itemsToRender.length === 0) {
+                        const t = UI_TEXT[next] || UI_TEXT.en;
+                        resultsGrid.innerHTML = `<li style="padding:2rem; text-align:center; color:var(--color-text-muted); font-size:1.2rem;">${t.resultsNone}</li>`;
+                    } else {
+                        for (const item of itemsToRender) {
+                            resultsGrid.appendChild(createProductCard(item, currentQuery));
+                        }
                     }
+                    // update visible product count after re-render
+                    updateProductCount(itemsToRender.length);
                 });
             }
 
@@ -1879,11 +2049,11 @@
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value;
                 const filteredItems = filterItems(query);
+                const lang = getLang();
                 
-                // Update results grid
                 resultsGrid.innerHTML = '';
                 if(filteredItems.length === 0) {
-                    const t = UI_TEXT[getLang()] || UI_TEXT.en;
+                    const t = UI_TEXT[lang] || UI_TEXT.en;
                     resultsGrid.innerHTML = `<li style="padding:2rem; text-align:center; color:var(--color-text-muted); font-size:1.2rem;">${t.resultsNone}</li>`;
                 } else {
                     for (const item of filteredItems) {
@@ -1891,10 +2061,11 @@
                     }
                 }
                 
-                // Update datalist
                 suggestions.innerHTML = filteredItems
-                    .map(item => `<option value="${item.name}">`)
+                    .map(item => `<option value="${t(item.name, lang)}">`)
                     .join('');
+                // update visible product count after search
+                updateProductCount(filteredItems.length);
             });
         });
     </script>
